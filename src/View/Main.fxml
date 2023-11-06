@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.Main">
+   <children>
+      <Label layoutX="14.0" layoutY="26.0" text="Appointments">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <AnchorPane fx:id="apps" layoutX="19.0" layoutY="56.0" prefHeight="256.0" prefWidth="682.0">
+         <children>
+            <TableView layoutX="14.0" layoutY="28.0" prefHeight="200.0" prefWidth="748.0">
+              <columns>
+                <TableColumn prefWidth="34.0" text="ID" />
+                <TableColumn prefWidth="61.0" text="Title" />
+                  <TableColumn prefWidth="61.0" text="Type" />
+                  <TableColumn prefWidth="88.0" text="Description" />
+                  <TableColumn prefWidth="68.0" text="Location" />
+                  <TableColumn prefWidth="104.0" text="Start Date/Time" />
+                  <TableColumn prefWidth="109.0" text="End Date/Time" />
+                  <TableColumn prefWidth="75.0" text="Contact" />
+                  <TableColumn prefWidth="75.0" text="Customer ID" />
+                  <TableColumn prefWidth="75.0" text="User ID" />
+              </columns>
+            </TableView>
+            <RadioButton layoutX="424.0" layoutY="6.0" mnemonicParsing="false" text="Current Week">
+               <toggleGroup>
+                  <ToggleGroup fx:id="DateGroups" />
+               </toggleGroup>
+            </RadioButton>
+            <RadioButton layoutX="526.0" layoutY="6.0" mnemonicParsing="false" text="Current Month" toggleGroup="$DateGroups" />
+            <RadioButton layoutX="634.0" layoutY="6.0" mnemonicParsing="false" text="All Appointments" toggleGroup="$DateGroups" />
+         </children></AnchorPane>
+      <AnchorPane fx:id="custs" layoutX="26.0" layoutY="315.0" prefHeight="256.0" prefWidth="571.0" />
+      <AnchorPane fx:id="btns" layoutX="597.0" layoutY="315.0" prefHeight="256.0" prefWidth="181.0" />
+   </children>
+</AnchorPane>
