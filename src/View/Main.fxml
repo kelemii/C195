@@ -6,14 +6,14 @@
 
 <AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.Main">
    <children>
-      <Label layoutX="14.0" layoutY="26.0" text="Appointments">
+      <Label layoutX="19.0" layoutY="26.0" text="Appointments">
          <font>
             <Font size="20.0" />
          </font>
       </Label>
       <AnchorPane fx:id="apps" layoutX="19.0" layoutY="56.0" prefHeight="256.0" prefWidth="682.0">
          <children>
-            <TableView layoutX="14.0" layoutY="28.0" prefHeight="200.0" prefWidth="748.0">
+            <TableView fx:id="appointmentsTable" layoutX="20.0" layoutY="28.0" prefHeight="200.0" prefWidth="742.0">
               <columns>
                 <TableColumn prefWidth="34.0" text="ID" />
                 <TableColumn prefWidth="61.0" text="Title" />
@@ -34,8 +34,35 @@
             </RadioButton>
             <RadioButton layoutX="526.0" layoutY="6.0" mnemonicParsing="false" text="Current Month" toggleGroup="$DateGroups" />
             <RadioButton layoutX="634.0" layoutY="6.0" mnemonicParsing="false" text="All Appointments" toggleGroup="$DateGroups" />
+            <Button layoutX="32.0" layoutY="230.0" mnemonicParsing="false" onAction="#handleNewApp" text="Add" />
+            <Button layoutX="105.0" layoutY="230.0" mnemonicParsing="false" onAction="#handleUpdateApp" text="Update" />
+            <Button layoutX="198.0" layoutY="230.0" mnemonicParsing="false" onAction="#handleDeleteApp" text="Delete" />
          </children></AnchorPane>
-      <AnchorPane fx:id="custs" layoutX="26.0" layoutY="315.0" prefHeight="256.0" prefWidth="571.0" />
-      <AnchorPane fx:id="btns" layoutX="597.0" layoutY="315.0" prefHeight="256.0" prefWidth="181.0" />
+      <AnchorPane fx:id="custs" layoutX="26.0" layoutY="315.0" prefHeight="256.0" prefWidth="571.0">
+         <children>
+            <TableView fx:id="customersTable" layoutX="12.0" layoutY="43.0" prefHeight="200.0" prefWidth="557.0">
+             <columns>
+             <TableColumn prefWidth="48.0" text="ID" />
+                  <TableColumn prefWidth="100.0" text="Name" />
+                  <TableColumn prefWidth="122.0" text="Address" />
+                  <TableColumn minWidth="0.0" prefWidth="117.0" text="Phone Number" />
+                  <TableColumn prefWidth="97.0" text="State/Province" />
+                  <TableColumn minWidth="0.0" prefWidth="72.0" text="Postal Code" />
+             </columns>
+             </TableView>
+            <Label layoutX="12.0" layoutY="14.0" prefHeight="17.0" prefWidth="114.0" text="Customers">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+         </children></AnchorPane>
+      <AnchorPane fx:id="btns" layoutX="597.0" layoutY="315.0" prefHeight="256.0" prefWidth="181.0">
+         <children>
+            <Button layoutX="34.0" layoutY="45.0" mnemonicParsing="false" onAction="#handleReports" prefHeight="67.0" prefWidth="114.0" text="Reports" />
+            <Button layoutX="34.0" layoutY="153.0" mnemonicParsing="false" onAction="#handleLogout" prefHeight="67.0" prefWidth="114.0" text="Logout" />
+         </children></AnchorPane>
+      <Button layoutX="56.0" layoutY="559.0" mnemonicParsing="false" onAction="#handleAddCust" text="Add" />
+      <Button layoutX="119.0" layoutY="559.0" mnemonicParsing="false" onAction="#handleUpdateCust" text="Update" />
+      <Button layoutX="197.0" layoutY="559.0" mnemonicParsing="false" onAction="#handleDeleteCust" text="Delete" />
    </children>
 </AnchorPane>

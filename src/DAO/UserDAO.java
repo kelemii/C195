@@ -1,18 +1,12 @@
 package DAO;
 
-import DBConnection.JDBC;
-import Model.User;
-
-import javax.sql.DataSource;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import static DBConnection.JDBC.connection;
 
-public class userDAOImpl implements UserDao {
-
+public class UserDAO {
     private static final String LOGIN_QUERY = "SELECT * FROM users WHERE User_Name = ? AND Password = ?";
 
     public int checkLogin(String username, String password) {
@@ -36,14 +30,4 @@ public class userDAOImpl implements UserDao {
 
         return userID;
     }
-
-
-
-    @Override
-    public User findUserByUsernameAndPassword(String username, String password) {
-        return null;
-    }
-
-
-
 }
