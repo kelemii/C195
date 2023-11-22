@@ -2,18 +2,17 @@ package Controller;
 
 import DAO.AppointmentDAO;
 import DAO.ContactDAO;
+import DAO.CustomerDAO;
 import DAO.UserDAO;
 import Model.Appointment;
 import Model.Contact;
 import Model.Customer;
-import Model.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.stage.Stage;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,9 +20,9 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 
-import static Controller.Login.currentUserName;
 import static Help.JDBC.connection;
 
 public class AddAppointment {
@@ -40,11 +39,13 @@ public class AddAppointment {
     @FXML
     private DatePicker AppointmentStartD, AppointmentEndD;
     @FXML
-    private ComboBox<LocalTime> AppointmentStartT, AppointmentEndT;
+    private ComboBox<String> AppointmentStartT, AppointmentEndT;
     @FXML
     private ComboBox<String> AppointmentContact, AppointmentCustomer;
     @FXML
     private ComboBox<Integer> AppointmentUser;
+    @FXML
+    private Button AddAppCancelBtn;
     private AppointmentDAO appointmentDAO;
     private UserDAO userDAO = new UserDAO();
     private ContactDAO contactDAO;
@@ -52,15 +53,23 @@ public class AddAppointment {
     public void initialize() throws SQLException {
         populateContacts();
         populateTimeComboBoxes();
+        populateCustomers();
         populateUserList();
         identifyNextID();
     }
     private void populateContacts() throws SQLException {
-        ObservableList<Contact> contactsList = FXCollections.observableArrayList();
+        ObservableList<Contact> contactsList;
         ObservableList<String> contactNamesList = FXCollections.observableArrayList();
         contactsList = contactDAO.getAllContacts();
         contactsList.forEach(contact -> contactNamesList.add(contact.getContactName()));
         AppointmentContact.setItems(contactNamesList);
+    }
+    private void populateCustomers() throws SQLException {
+        ObservableList<Customer> customerList;
+        ObservableList<String> customerNamesList = FXCollections.observableArrayList();
+        customerList = CustomerDAO.getAllCustomers();
+        customerList.forEach(customer -> customerNamesList.add(customer.getCustomerName()));
+        AppointmentCustomer.setItems(customerNamesList);
     }
 
     private void identifyNextID() {
@@ -94,12 +103,14 @@ public class AddAppointment {
 
 
     public void populateTimeComboBoxes() {
-        ObservableList<LocalTime> appointmentTimes = FXCollections.observableArrayList();
+        ObservableList<String> appointmentTimes = FXCollections.observableArrayList();
         LocalTime firstAppointment = LocalTime.MIN.plusHours(8);
         LocalTime lastAppointment = LocalTime.MAX.minusHours(1).minusMinutes(45);
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
         while (firstAppointment.isBefore(lastAppointment)) {
-            appointmentTimes.add(firstAppointment);
+            String timeStr = firstAppointment.format(timeFormatter);
+            appointmentTimes.add(timeStr);
             firstAppointment = firstAppointment.plusMinutes(15);
         }
 
@@ -109,25 +120,79 @@ public class AddAppointment {
 
 
 
+
     public void AddAppSave(ActionEvent actionEvent) throws SQLException {
         int id = Integer.parseInt(AppointmentID.getText());
         String title = AppointmentTitle.getText();
         String description = AppointmentDesc.getText();
         String location = AppointmentLoc.getText();
         String type = AppointmentType.getText();
-        int customerId = Integer.parseInt(AppointmentCustomer.getId());
-        int userId = Integer.parseInt(AppointmentUser.getId());
-        int contactId = Integer.parseInt(AppointmentContact.getId());
-        LocalDateTime startDateTime = LocalDateTime.of(AppointmentStartD.getValue(), AppointmentStartT.getValue());
-        LocalDateTime endDateTime = LocalDateTime.of(AppointmentEndD.getValue(), AppointmentEndT.getValue());
+        int customerId = getCustomerId(AppointmentCustomer.getValue());
+        int userId = AppointmentUser.getValue();
+        int contactId = getContactId(AppointmentContact.getValue());
+
+        LocalTime startT = LocalTime.parse(AppointmentStartT.getValue());
+        LocalTime endT = LocalTime.parse(AppointmentEndT.getValue());
+
+        LocalDateTime startDateTime = LocalDateTime.of(AppointmentStartD.getValue(), startT);
+        LocalDateTime endDateTime = LocalDateTime.of(AppointmentEndD.getValue(), endT);
         LocalDateTime createDate = LocalDateTime.now();
-        String createdBy = currentUserName;
+        String createdBy = "Admin";
         LocalDateTime lastUpdate = LocalDateTime.now();
-        String lastUpdatedBy = currentUserName;
+        String lastUpdatedBy = "Admin";
         Appointment newAppointment = new Appointment(id, title, description, location, type, startDateTime, endDateTime, createDate, createdBy, lastUpdate, lastUpdatedBy, customerId, userId, contactId);
         appointmentDAO.saveAppointment(newAppointment);
+        Stage stage = (Stage) AddAppCancelBtn.getScene().getWindow();
+        stage.close();
+    }
+    public int getContactId(String contactName) throws SQLException {
+        String sql = "SELECT CONTACT_ID FROM client_schedule.contacts WHERE Contact_Name = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        try {
+            preparedStatement.setString(1, contactName);
+
+            try (ResultSet rs = preparedStatement.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("CONTACT_ID");
+                } else {
+                    return -1;
+                }
+            }
+        } catch (SQLException e) {
+            // Handle any SQL exceptions here
+            e.printStackTrace();
+        }
+        return preparedStatement.executeQuery().getInt("CONTACT_ID");
+    }
+    public int getCustomerId(String customerName) throws SQLException {
+        String sql = "SELECT CUSTOMER_ID FROM client_schedule.customers WHERE Customer_Name = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        try {
+            preparedStatement.setString(1, customerName);
+
+            try (ResultSet rs = preparedStatement.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("CUSTOMER_ID");
+                } else {
+                    return -1;
+                }
+            }
+        } catch (SQLException e) {
+            // Handle any SQL exceptions here
+            e.printStackTrace();
+        }
+        return preparedStatement.executeQuery().getInt("CUSTOMER_ID");
     }
 
     public void AddAppCancel(ActionEvent actionEvent) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Cancel Confirmation");
+        alert.setHeaderText("Are you sure you want to cancel?");
+        alert.setContentText("All unsaved changes will be lost.");
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            Stage stage = (Stage) AddAppCancelBtn.getScene().getWindow();
+            stage.close();
+        }
     }
 }

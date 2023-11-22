@@ -96,4 +96,39 @@ public class AppointmentDAO {
             e.printStackTrace();
         }
     }
+    public static void updateAppointment(Appointment appointment) throws SQLException {
+        String sql = "UPDATE appointments " +
+                "SET Title = ?, Description = ?, Location = ?, Type = ?, Start = ?, End = ?, " +
+                "Create_Date = ?, Created_By = ?, Last_Update = ?, Last_Updated_By = ?, " +
+                "Customer_ID = ?, User_ID = ?, Contact_ID = ? " +
+                "WHERE Appointment_ID = ?";
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+            preparedStatement.setString(1, appointment.getTitle());
+            preparedStatement.setString(2, appointment.getDescription());
+            preparedStatement.setString(3, appointment.getLocation());
+            preparedStatement.setString(4, appointment.getType());
+            preparedStatement.setTimestamp(5, Timestamp.valueOf(appointment.getStart()));
+            preparedStatement.setTimestamp(6, Timestamp.valueOf(appointment.getEnd()));
+            preparedStatement.setTimestamp(7, Timestamp.valueOf(appointment.getCreateDate()));
+            preparedStatement.setString(8, appointment.getCreatedBy());
+            preparedStatement.setTimestamp(9, Timestamp.valueOf(appointment.getLastUpdate()));
+            preparedStatement.setString(10, appointment.getLastUpdatedBy());
+            preparedStatement.setInt(11, appointment.getCustomerId());
+            preparedStatement.setInt(12, appointment.getUserId());
+            preparedStatement.setInt(13, appointment.getContactId());
+            preparedStatement.setInt(14, appointment.getAppointmentId());
+
+            int affectedRows = preparedStatement.executeUpdate();
+
+            if (affectedRows > 0) {
+
+            }
+        } catch (SQLException e) {
+            // Handle any SQL exceptions here
+            e.printStackTrace();
+        }
+    }
 }

@@ -27,13 +27,13 @@
                   <TableColumn fx:id="AppUserID" prefWidth="75.0" text="User ID" />
               </columns>
             </TableView>
-            <RadioButton layoutX="424.0" layoutY="6.0" mnemonicParsing="false" text="Current Week">
+            <RadioButton layoutX="424.0" layoutY="6.0" mnemonicParsing="false" onAction="#handleCurrentWeek" text="Current Week">
                <toggleGroup>
                   <ToggleGroup fx:id="DateGroups" />
                </toggleGroup>
             </RadioButton>
-            <RadioButton layoutX="526.0" layoutY="6.0" mnemonicParsing="false" text="Current Month" toggleGroup="$DateGroups" />
-            <RadioButton layoutX="634.0" layoutY="6.0" mnemonicParsing="false" text="All Appointments" toggleGroup="$DateGroups" />
+            <RadioButton layoutX="526.0" layoutY="6.0" mnemonicParsing="false" onAction="#handleCurrentMonth" text="Current Month" toggleGroup="$DateGroups" />
+            <RadioButton layoutX="634.0" layoutY="6.0" mnemonicParsing="false" onAction="#handleAllAppointments" selected="true" text="All Appointments" toggleGroup="$DateGroups" />
             <Button layoutX="32.0" layoutY="230.0" mnemonicParsing="false" onAction="#handleNewApp" text="Add" />
             <Button layoutX="105.0" layoutY="230.0" mnemonicParsing="false" onAction="#handleUpdateApp" text="Update" />
             <Button layoutX="198.0" layoutY="230.0" mnemonicParsing="false" onAction="#handleDeleteApp" text="Delete" />

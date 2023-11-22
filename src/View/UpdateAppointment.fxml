@@ -1,14 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="Controller.UpdateAppointment"
-            prefHeight="600.0" prefWidth="600.0">
-
+<AnchorPane prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.UpdateAppointment">
+    <children>
+        <Label layoutX="64.0" layoutY="74.0" text="Appointment ID" textAlignment="RIGHT" />
+        <Label layoutX="94.0" layoutY="110.0" text="Title" />
+        <Label layoutX="76.0" layoutY="146.0" text="Description" textAlignment="RIGHT" />
+        <Label layoutX="82.0" layoutY="184.0" text="Location" />
+        <Label layoutX="78.0" layoutY="308.0" text="Start Time" />
+        <Label layoutX="81.0" layoutY="357.0" text="End Date" />
+        <Label layoutX="92.0" layoutY="224.0" text="Type" />
+        <Label layoutX="78.0" layoutY="265.0" text="Start Date" />
+        <Label layoutX="80.0" layoutY="403.0" text="End Time" />
+        <Label layoutX="79.0" layoutY="443.0" text="Customer ID" />
+        <Label layoutX="84.0" layoutY="479.0" text="User ID" />
+        <TextField fx:id="AppointmentTitle" layoutX="226.0" layoutY="106.0" />
+        <TextField fx:id="AppointmentDesc" layoutX="226.0" layoutY="142.0" />
+        <TextField fx:id="AppointmentLoc" layoutX="226.0" layoutY="180.0" />
+        <TextField fx:id="AppointmentType" layoutX="226.0" layoutY="220.0" />
+        <Label layoutX="85.0" layoutY="521.0" text="Contact" />
+        <DatePicker fx:id="AppointmentStartD" layoutX="226.0" layoutY="261.0" />
+        <DatePicker fx:id="AppointmentEndD" layoutX="226.0" layoutY="353.0" />
+        <ComboBox fx:id="AppointmentEndT" layoutX="225.0" layoutY="399.0" prefWidth="150.0" />
+        <ComboBox fx:id="AppointmentStartT" editable="true" layoutX="226.0" layoutY="304.0" prefWidth="150.0" />
+        <ComboBox fx:id="AppointmentContact" layoutX="225.0" layoutY="517.0" prefWidth="150.0" />
+        <Button fx:id="UpdateAppSaveBtn" layoutX="417.0" layoutY="542.0" mnemonicParsing="false" onAction="#UpdateAppSave" text="Save" />
+        <Button fx:id="UpdateAppCancelBtn" layoutX="502.0" layoutY="542.0" mnemonicParsing="false" onAction="#UpdateAppCancel" text="Cancel" />
+        <ComboBox fx:id="AppointmentUser" layoutX="225.0" layoutY="475.0" prefWidth="150.0" />
+        <TextField fx:id="AppointmentID" disable="true" editable="false" layoutX="226.0" layoutY="70.0" />
+        <ComboBox fx:id="AppointmentCustomer" layoutX="225.0" layoutY="439.0" prefWidth="150.0" />
+    </children>
 </AnchorPane>

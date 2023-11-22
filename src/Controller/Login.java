@@ -57,7 +57,7 @@ public class Login implements Initializable {
         String pwd = password.getText();
         currentUserID = loginForm.checkLogin(user, pwd);
 
-        currentUserName = connection.prepareStatement("SELECT User_nmame FROM users WHERE User_ID = " + currentUserID).toString();
+        currentUserName = connection.prepareStatement("SELECT User_name FROM users WHERE User_ID = " + currentUserID).toString();
 //        preparedStatement.setString(currentUserID);
 
         if (currentUserID > 0) {

@@ -21,7 +21,13 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+
+import static Help.JDBC.connection;
 
 public class Main implements Initializable {
     private int currentUserID;
@@ -75,7 +81,7 @@ public class Main implements Initializable {
             throw new RuntimeException(e);
         }
     }
-    public void handleNewApp(ActionEvent actionEvent) throws IOException {
+    public void handleNewApp(ActionEvent actionEvent) throws IOException, SQLException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("/View/AddAppointment.fxml"));
         Parent root = loader.load();
@@ -86,12 +92,60 @@ public class Main implements Initializable {
         stage.setTitle("Add New Appointment");
         stage.setScene(new Scene(root));
         stage.showAndWait();
+        initializeAppointments();
     }
 
-    public void handleUpdateApp(ActionEvent actionEvent) {
+    public void handleUpdateApp(ActionEvent actionEvent) throws IOException, SQLException {
+        Appointment selectedAppointment = appointmentsTable.getSelectionModel().getSelectedItem();
+
+        if (selectedAppointment != null) {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/View/UpdateAppointment.fxml"));
+            Parent root = loader.load();
+
+            // Access the controller for the second view
+            UpdateAppointment updateAppointmentController = loader.getController();
+
+            // Pass the data to the second view's controller
+            updateAppointmentController.initData(selectedAppointment);
+
+            // Create a new stage for the second view
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Update Appointment");
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+            initializeAppointments();
+        }
     }
+
 
     public void handleDeleteApp(ActionEvent actionEvent) {
+        Appointment selectedAppointment = appointmentsTable.getSelectionModel().getSelectedItem();
+
+        if (selectedAppointment != null) {
+            int appointmentId = selectedAppointment.getAppointmentId();
+
+            // Call the DAO method to delete the appointment from the database
+            try {
+                int rowsAffected = AppointmentDAO.deleteAppointment(appointmentId, connection);
+
+                if (rowsAffected > 0) {
+                    // Remove the appointment from the ObservableList
+                    appointmentsTable.getItems().remove(selectedAppointment);
+
+                    // Refresh the TableView to reflect the changes
+                    appointmentsTable.refresh();
+                } else {
+                    // Handle the case where deletion fails (e.g., show an error message)
+                    // You can display an alert or log an error message here
+                    System.err.println("Failed to delete appointment from the database.");
+                }
+            } catch (SQLException e) {
+                // Handle any exceptions that occur during deletion
+                e.printStackTrace(); // You can log the error or handle it based on your application's needs
+            }
+        }
     }
 
     public void handleReports(ActionEvent actionEvent) {
@@ -108,5 +162,70 @@ public class Main implements Initializable {
 
     public void handleDeleteCust(ActionEvent actionEvent) {
     }
+    public void handleAllAppointments(ActionEvent actionEvent) throws SQLException {
+        initializeAppointments();
+    }
 
+    public void handleCurrentMonth(ActionEvent actionEvent) throws SQLException {
+
+        LocalDate currentDate = LocalDate.now();
+        LocalDate endOfMonth = currentDate.withDayOfMonth(currentDate.lengthOfMonth());
+        List<Appointment> filteredAppointments;
+        ObservableList<Appointment> appointmentData = FXCollections.observableArrayList();
+        appointmentData.addAll(AppointmentDAO.getAllAppointments());
+        AppointmentID.setCellValueFactory(new PropertyValueFactory<>("AppointmentId"));
+        AppointmentTitle.setCellValueFactory(new PropertyValueFactory<>("Title"));
+        AppointmentType.setCellValueFactory(new PropertyValueFactory<>("Type"));
+        AppointmentDescription.setCellValueFactory(new PropertyValueFactory<>("Description"));
+        AppointmentLocation.setCellValueFactory(new PropertyValueFactory<>("Location"));
+        AppointmentStart.setCellValueFactory(new PropertyValueFactory<>("Start"));
+        AppointmentEnd.setCellValueFactory(new PropertyValueFactory<>("End"));
+        AppContact.setCellValueFactory(new PropertyValueFactory<>("ContactId"));
+        AppCustID.setCellValueFactory(new PropertyValueFactory<>("CustomerId"));
+        AppUserID.setCellValueFactory(new PropertyValueFactory<>("UserId"));
+        appointmentsTable.setItems(appointmentData);
+
+        filteredAppointments = appointmentData.stream()
+                .filter(appointment -> {
+                    LocalDateTime appointmentStart = appointment.getStart();
+                    LocalDate appointmentStartDate = appointmentStart.toLocalDate();
+                    return !appointmentStartDate.isBefore(currentDate.withDayOfMonth(1))
+                            && !appointmentStartDate.isAfter(endOfMonth);
+                })
+                .collect(Collectors.toList());
+
+        appointmentsTable.setItems(FXCollections.observableArrayList(filteredAppointments));
+    }
+
+    public void handleCurrentWeek(ActionEvent actionEvent) throws SQLException {
+        LocalDate currentDate = LocalDate.now();
+        LocalDate endOfWeek = currentDate.plusDays(6 - currentDate.getDayOfWeek().getValue());
+        List<Appointment> filteredAppointments;
+        ObservableList<Appointment> appointmentData = FXCollections.observableArrayList();
+        appointmentData.addAll(AppointmentDAO.getAllAppointments());
+        AppointmentID.setCellValueFactory(new PropertyValueFactory<>("AppointmentId"));
+        AppointmentTitle.setCellValueFactory(new PropertyValueFactory<>("Title"));
+        AppointmentType.setCellValueFactory(new PropertyValueFactory<>("Type"));
+        AppointmentDescription.setCellValueFactory(new PropertyValueFactory<>("Description"));
+        AppointmentLocation.setCellValueFactory(new PropertyValueFactory<>("Location"));
+        AppointmentStart.setCellValueFactory(new PropertyValueFactory<>("Start"));
+        AppointmentEnd.setCellValueFactory(new PropertyValueFactory<>("End"));
+        AppContact.setCellValueFactory(new PropertyValueFactory<>("ContactId"));
+        AppCustID.setCellValueFactory(new PropertyValueFactory<>("CustomerId"));
+        AppUserID.setCellValueFactory(new PropertyValueFactory<>("UserId"));
+        appointmentsTable.setItems(appointmentData);
+
+        // Filter the appointments for the current week
+        filteredAppointments = appointmentData.stream()
+                .filter(appointment -> {
+                    LocalDateTime appointmentStart = appointment.getStart();
+                    LocalDate appointmentStartDate = appointmentStart.toLocalDate();
+                    return !appointmentStartDate.isBefore(currentDate) && !appointmentStartDate.isAfter(endOfWeek);
+                })
+                .collect(Collectors.toList());
+
+        // Update the TableView with the filtered appointments
+        appointmentsTable.setItems(FXCollections.observableArrayList(filteredAppointments));
+
+    }
 }
