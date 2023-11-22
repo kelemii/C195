@@ -15,16 +15,16 @@
          <children>
             <TableView fx:id="appointmentsTable" layoutX="20.0" layoutY="28.0" prefHeight="200.0" prefWidth="742.0">
               <columns>
-                <TableColumn prefWidth="34.0" text="ID" />
-                <TableColumn prefWidth="61.0" text="Title" />
-                  <TableColumn prefWidth="61.0" text="Type" />
-                  <TableColumn prefWidth="88.0" text="Description" />
-                  <TableColumn prefWidth="68.0" text="Location" />
-                  <TableColumn prefWidth="104.0" text="Start Date/Time" />
-                  <TableColumn prefWidth="109.0" text="End Date/Time" />
-                  <TableColumn prefWidth="75.0" text="Contact" />
-                  <TableColumn prefWidth="75.0" text="Customer ID" />
-                  <TableColumn prefWidth="75.0" text="User ID" />
+                <TableColumn fx:id="AppointmentsID" prefWidth="34.0" text="ID" />
+                <TableColumn fx:id="AppointmentsTitle" prefWidth="61.0" text="Title" />
+                  <TableColumn fx:id="AppointmentType" prefWidth="61.0" text="Type" />
+                  <TableColumn fx:id="AppointmentDescription" prefWidth="88.0" text="Description" />
+                  <TableColumn fx:id="AppointmentLocation" prefWidth="68.0" text="Location" />
+                  <TableColumn fx:id="AppointmentStart" prefWidth="104.0" text="Start Date/Time" />
+                  <TableColumn fx:id="AppointmentEnd" prefWidth="109.0" text="End Date/Time" />
+                  <TableColumn fx:id="AppContact" prefWidth="75.0" text="Contact" />
+                  <TableColumn fx:id="AppCustID" prefWidth="75.0" text="Customer ID" />
+                  <TableColumn fx:id="AppUserID" prefWidth="75.0" text="User ID" />
               </columns>
             </TableView>
             <RadioButton layoutX="424.0" layoutY="6.0" mnemonicParsing="false" text="Current Week">

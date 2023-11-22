@@ -8,7 +8,9 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -21,6 +23,8 @@ public class Main implements Initializable {
     private TableView<Appointment> appointmentsTable;
     @FXML
     private TableView<Customer> customersTable;
+    @FXML
+    private TableColumn<?, ?> AppointmentsID, AppointmentsTitle, AppointmentType;
 
     public void setCurrentUserID(int currentUserID) {
         this.currentUserID = currentUserID;
@@ -31,7 +35,16 @@ public class Main implements Initializable {
         // Fetch appointments from the database
         // For example:
         appointmentData.addAll(AppointmentDAO.getAllAppointments());
+        AppointmentsID.setCellValueFactory(new PropertyValueFactory<>("AppointmentId"));
+        AppointmentsTitle.setCellValueFactory(new PropertyValueFactory<>("Title"));
+        AppointmentType.setCellValueFactory(new PropertyValueFactory<>("Type"));
+        System.out.println(appointmentData.get(0).getCustomerId());
+        System.out.println(appointmentData.get(1).getCustomerId());
+        System.out.println(appointmentData.get(0).getType());
+        System.out.println(appointmentData.get(1).getType());
         appointmentsTable.setItems(appointmentData);
+        System.out.println(appointmentsTable.getColumns().get(0).cellFactoryProperty().toString());
+
     }
 
 //    public void initializeCustomers() {
