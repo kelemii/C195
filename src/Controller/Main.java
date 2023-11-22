@@ -154,7 +154,17 @@ public class Main implements Initializable {
     public void handleLogout(ActionEvent actionEvent) {
     }
 
-    public void handleAddCust(ActionEvent actionEvent) {
+    public void handleAddCust(ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("/View/AddCustomer.fxml"));
+        Parent root = loader.load();
+
+        // Create a new stage for the popup
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL); // Set the window to be modal
+        stage.setTitle("Add New Customer");
+        stage.setScene(new Scene(root));
+        stage.showAndWait();
     }
 
     public void handleUpdateCust(ActionEvent actionEvent) {
