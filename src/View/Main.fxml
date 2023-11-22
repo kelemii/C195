@@ -15,8 +15,8 @@
          <children>
             <TableView fx:id="appointmentsTable" layoutX="20.0" layoutY="28.0" prefHeight="200.0" prefWidth="742.0">
               <columns>
-                <TableColumn fx:id="AppointmentsID" prefWidth="34.0" text="ID" />
-                <TableColumn fx:id="AppointmentsTitle" prefWidth="61.0" text="Title" />
+                <TableColumn fx:id="AppointmentID" prefWidth="34.0" text="ID" />
+                <TableColumn fx:id="AppointmentTitle" prefWidth="61.0" text="Title" />
                   <TableColumn fx:id="AppointmentType" prefWidth="61.0" text="Type" />
                   <TableColumn fx:id="AppointmentDescription" prefWidth="88.0" text="Description" />
                   <TableColumn fx:id="AppointmentLocation" prefWidth="68.0" text="Location" />
@@ -42,12 +42,12 @@
          <children>
             <TableView fx:id="customersTable" layoutX="12.0" layoutY="43.0" prefHeight="200.0" prefWidth="557.0">
              <columns>
-             <TableColumn prefWidth="48.0" text="ID" />
-                  <TableColumn prefWidth="100.0" text="Name" />
-                  <TableColumn prefWidth="122.0" text="Address" />
-                  <TableColumn minWidth="0.0" prefWidth="117.0" text="Phone Number" />
-                  <TableColumn prefWidth="97.0" text="State/Province" />
-                  <TableColumn minWidth="0.0" prefWidth="72.0" text="Postal Code" />
+             <TableColumn fx:id="CustID" prefWidth="48.0" text="ID" />
+                  <TableColumn fx:id="CustName" prefWidth="100.0" text="Name" />
+                  <TableColumn fx:id="CustAdd" prefWidth="122.0" text="Address" />
+                  <TableColumn fx:id="CustPhone" minWidth="0.0" prefWidth="117.0" text="Phone Number" />
+                  <TableColumn fx:id="CustState" prefWidth="97.0" text="State/Province" />
+                  <TableColumn fx:id="CustZip" minWidth="0.0" prefWidth="72.0" text="Postal Code" />
              </columns>
              </TableView>
             <Label layoutX="12.0" layoutY="14.0" prefHeight="17.0" prefWidth="114.0" text="Customers">

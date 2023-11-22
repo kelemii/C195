@@ -8,13 +8,13 @@
    <children>
       <TextField fx:id="UserName" layoutX="323.0" layoutY="253.0" promptText="Username" />
       <PasswordField fx:id="password" layoutX="323.0" layoutY="288.0" onAction="#handleLogin" prefHeight="25.0" prefWidth="149.0" promptText="Password" />
-      <Button layoutX="323.0" layoutY="329.0" mnemonicParsing="false" onAction="#handleLogin" text="Login" />
-      <Label layoutX="217.0" layoutY="60.0" text="Scheduling Application">
+      <Button fx:id="LoginBtn" layoutX="323.0" layoutY="329.0" mnemonicParsing="false" onAction="#handleLogin" text="Login" />
+      <Label fx:id="AppName" layoutX="217.0" layoutY="60.0" text="Scheduling Application">
          <font>
             <Font size="36.0" />
          </font></Label>
-      <Button layoutX="420.0" layoutY="329.0" mnemonicParsing="false" onAction="#exitBtn" text="Exit" />
-      <Label layoutX="527.0" layoutY="551.0" text="Location :">
+      <Button fx:id="ExitBtn" layoutX="420.0" layoutY="329.0" mnemonicParsing="false" onAction="#exitBtn" text="Exit" />
+      <Label fx:id="location" layoutX="527.0" layoutY="551.0" text="Location :">
          <font>
             <Font size="15.0" />
          </font></Label>

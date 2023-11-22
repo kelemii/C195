@@ -1,6 +1,7 @@
 package Controller;
 
 import DAO.AppointmentDAO;
+import DAO.CustomerDAO;
 import Model.Appointment;
 import Model.Customer;
 import javafx.collections.FXCollections;
@@ -24,7 +25,7 @@ public class Main implements Initializable {
     @FXML
     private TableView<Customer> customersTable;
     @FXML
-    private TableColumn<?, ?> AppointmentsID, AppointmentsTitle, AppointmentType;
+    private TableColumn<?, ?> AppointmentID, AppointmentTitle, AppointmentType, AppointmentDescription, AppointmentLocation, AppointmentStart, AppointmentEnd, AppContact, AppCustID, AppUserID, CustID, CustName, CustAdd, CustPhone, CustState, CustZip;
 
     public void setCurrentUserID(int currentUserID) {
         this.currentUserID = currentUserID;
@@ -32,38 +33,41 @@ public class Main implements Initializable {
 
     public void initializeAppointments() throws SQLException {
         ObservableList<Appointment> appointmentData = FXCollections.observableArrayList();
-        // Fetch appointments from the database
-        // For example:
         appointmentData.addAll(AppointmentDAO.getAllAppointments());
-        AppointmentsID.setCellValueFactory(new PropertyValueFactory<>("AppointmentId"));
-        AppointmentsTitle.setCellValueFactory(new PropertyValueFactory<>("Title"));
+        AppointmentID.setCellValueFactory(new PropertyValueFactory<>("AppointmentId"));
+        AppointmentTitle.setCellValueFactory(new PropertyValueFactory<>("Title"));
         AppointmentType.setCellValueFactory(new PropertyValueFactory<>("Type"));
-        System.out.println(appointmentData.get(0).getCustomerId());
-        System.out.println(appointmentData.get(1).getCustomerId());
-        System.out.println(appointmentData.get(0).getType());
-        System.out.println(appointmentData.get(1).getType());
+        AppointmentDescription.setCellValueFactory(new PropertyValueFactory<>("Description"));
+        AppointmentLocation.setCellValueFactory(new PropertyValueFactory<>("Location"));
+        AppointmentStart.setCellValueFactory(new PropertyValueFactory<>("Start"));
+        AppointmentEnd.setCellValueFactory(new PropertyValueFactory<>("End"));
+        AppContact.setCellValueFactory(new PropertyValueFactory<>("ContactId"));
+        AppCustID.setCellValueFactory(new PropertyValueFactory<>("CustomerId"));
+        AppUserID.setCellValueFactory(new PropertyValueFactory<>("UserId"));
         appointmentsTable.setItems(appointmentData);
-        System.out.println(appointmentsTable.getColumns().get(0).cellFactoryProperty().toString());
-
     }
 
-//    public void initializeCustomers() {
-//        ObservableList<Customer> customerData = FXCollections.observableArrayList();
-//        // Fetch customers from the database
-//        // For example:
-//        customerData.addAll(customerDAO.getAllCustomers());
-//        customersTable.setItems(customerData);
-//    }
+    public void initializeCustomers() throws SQLException {
+        ObservableList<Customer> customerData = FXCollections.observableArrayList();
+        customerData.addAll(CustomerDAO.getAllCustomers());
+        CustID.setCellValueFactory(new PropertyValueFactory<>("CustomerId"));
+        CustName.setCellValueFactory(new PropertyValueFactory<>("customerName"));
+        CustAdd.setCellValueFactory(new PropertyValueFactory<>("address"));
+        CustPhone.setCellValueFactory(new PropertyValueFactory<>("phone"));
+        CustState.setCellValueFactory(new PropertyValueFactory<>("Division"));
+        CustZip.setCellValueFactory(new PropertyValueFactory<>("postalCode"));
+        customersTable.setItems(customerData);
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Initialize tables
         try {
             initializeAppointments();
+            initializeCustomers();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-//        initializeCustomers();
     }
     public void handleNewApp(ActionEvent actionEvent) {
     }

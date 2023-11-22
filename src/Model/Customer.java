@@ -9,26 +9,19 @@ public class Customer {
     private String address;
     private String postalCode;
     private String phone;
-    private LocalDateTime createDate;
-    private String createdBy;
-    private LocalDateTime lastUpdate;
-    private String lastUpdatedBy;
-    private int divisionId; // This is a foreign key reference to the FirstLevelDivision table
+    private int divisionId;
+    private String division;
 
     // Constructor
     public Customer(int customerId, String customerName, String address, String postalCode,
-                    String phone, LocalDateTime createDate, String createdBy,
-                    LocalDateTime lastUpdate, String lastUpdatedBy, int divisionId) {
+                    String phone, int divisionId, String division) {
         this.customerId = customerId;
         this.customerName = customerName;
         this.address = address;
         this.postalCode = postalCode;
         this.phone = phone;
-        this.createDate = createDate;
-        this.createdBy = createdBy;
-        this.lastUpdate = lastUpdate;
-        this.lastUpdatedBy = lastUpdatedBy;
         this.divisionId = divisionId;
+        this.division = division;
     }
 
     // Getters and setters for each field
@@ -71,39 +64,6 @@ public class Customer {
     public void setPhone(String phone) {
         this.phone = phone;
     }
-
-    public LocalDateTime getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(LocalDateTime createDate) {
-        this.createDate = createDate;
-    }
-
-    public String getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public LocalDateTime getLastUpdate() {
-        return lastUpdate;
-    }
-
-    public void setLastUpdate(LocalDateTime lastUpdate) {
-        this.lastUpdate = lastUpdate;
-    }
-
-    public String getLastUpdatedBy() {
-        return lastUpdatedBy;
-    }
-
-    public void setLastUpdatedBy(String lastUpdatedBy) {
-        this.lastUpdatedBy = lastUpdatedBy;
-    }
-
     public int getDivisionId() {
         return divisionId;
     }
@@ -111,7 +71,14 @@ public class Customer {
     public void setDivisionId(int divisionId) {
         this.divisionId = divisionId;
     }
+    public String getDivision() {
+        return division;
+    }
 
-    // You can add additional methods like toString(), equals(), hashCode(), etc., as needed.
+    public void setDivision(int divisionId) {
+        this.division = division;
+    }
+
+
 }
 

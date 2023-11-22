@@ -10,6 +10,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -17,6 +18,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.time.ZoneId;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class Login implements Initializable {
@@ -24,8 +26,12 @@ public class Login implements Initializable {
     private static int currentUserID = 0;
     @FXML
     private TextField UserName, password;
-    @FXML private Label timeZoneLabel;
+    @FXML
+    private Label timeZoneLabel, AppName, location;
+    @FXML
+    private Button LoginBtn, ExitBtn;
     private UserDAO loginForm = new UserDAO();
+    ResourceBundle resourceBundle = ResourceBundle.getBundle("lang/login", Locale.getDefault());
 
 
     @Override
@@ -33,7 +39,13 @@ public class Login implements Initializable {
         ZoneId systemTimeZone = ZoneId.systemDefault();
         String timeZoneString = systemTimeZone.getId();
         timeZoneLabel.setText(timeZoneString);
-        System.out.println("initialized login");
+        resourceBundle = ResourceBundle.getBundle("lang/login", Locale.getDefault());
+        AppName.setText(resourceBundle.getString("Scheduling_Application"));
+        UserName.setPromptText(resourceBundle.getString("username"));
+        password.setPromptText(resourceBundle.getString("password"));
+        LoginBtn.setText(resourceBundle.getString("Login"));
+        ExitBtn.setText(resourceBundle.getString("Exit"));
+        location.setText(resourceBundle.getString("Location"));
     }
 
     public void handleLogin(ActionEvent actionEvent) throws IOException {
