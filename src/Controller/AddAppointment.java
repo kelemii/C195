@@ -1,6 +1,7 @@
 package Controller;
 
 import DAO.AppointmentDAO;
+import DAO.ContactDAO;
 import DAO.UserDAO;
 import Model.Appointment;
 import Model.Contact;
@@ -41,22 +42,25 @@ public class AddAppointment {
     @FXML
     private ComboBox<LocalTime> AppointmentStartT, AppointmentEndT;
     @FXML
-    private ComboBox<Contact> AppointmentContact, AppointmentCustomer;
+    private ComboBox<String> AppointmentContact, AppointmentCustomer;
     @FXML
     private ComboBox<Integer> AppointmentUser;
     private AppointmentDAO appointmentDAO;
     private UserDAO userDAO = new UserDAO();
-    //private ContactsDAO contactsDAO;
+    private ContactDAO contactDAO;
     @FXML
     public void initialize() throws SQLException {
-        ObservableList<Contact> contactsList = FXCollections.observableArrayList();
-        ObservableList<String> contactNamesList = FXCollections.observableArrayList();
-//        contactsList = contactsDAO.getAllContacts();
-        contactsList.forEach(contact -> contactNamesList.add(contact.getContactName()));
-
+        populateContacts();
         populateTimeComboBoxes();
         populateUserList();
         identifyNextID();
+    }
+    private void populateContacts() throws SQLException {
+        ObservableList<Contact> contactsList = FXCollections.observableArrayList();
+        ObservableList<String> contactNamesList = FXCollections.observableArrayList();
+        contactsList = contactDAO.getAllContacts();
+        contactsList.forEach(contact -> contactNamesList.add(contact.getContactName()));
+        AppointmentContact.setItems(contactNamesList);
     }
 
     private void identifyNextID() {
@@ -78,11 +82,9 @@ public class AddAppointment {
                 e.printStackTrace();
                 // Handle exception
             }
-//            return -1; // Return -1 or any other appropriate error value
         }
 
 
-    public void populateContactList() {}
     public void populateUserList() throws SQLException {
         ObservableList<Integer> usersList = FXCollections.observableArrayList();
         usersList = userDAO.getUserIDs();
