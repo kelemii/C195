@@ -8,7 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import static DBConnection.JDBC.connection;
+import static Help.JDBC.connection;
 
 public class CustomerDAO {
     public static ObservableList<Customer> getAllCustomers() throws SQLException {

@@ -17,13 +17,17 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.time.ZoneId;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import static Help.JDBC.connection;
+
 public class Login implements Initializable {
     Stage stage;
     private static int currentUserID = 0;
+    public static String currentUserName;
     @FXML
     private TextField UserName, password;
     @FXML
@@ -48,10 +52,14 @@ public class Login implements Initializable {
         location.setText(resourceBundle.getString("Location"));
     }
 
-    public void handleLogin(ActionEvent actionEvent) throws IOException {
+    public void handleLogin(ActionEvent actionEvent) throws IOException, SQLException {
         String user = UserName.getText();
         String pwd = password.getText();
         currentUserID = loginForm.checkLogin(user, pwd);
+
+        currentUserName = connection.prepareStatement("SELECT User_nmame FROM users WHERE User_ID = " + currentUserID).toString();
+//        preparedStatement.setString(currentUserID);
+
         if (currentUserID > 0) {
             //open main page
             FXMLLoader loader = new FXMLLoader();

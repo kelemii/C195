@@ -8,11 +8,17 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
@@ -69,7 +75,17 @@ public class Main implements Initializable {
             throw new RuntimeException(e);
         }
     }
-    public void handleNewApp(ActionEvent actionEvent) {
+    public void handleNewApp(ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("/View/AddAppointment.fxml"));
+        Parent root = loader.load();
+
+        // Create a new stage for the popup
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL); // Set the window to be modal
+        stage.setTitle("Add New Appointment");
+        stage.setScene(new Scene(root));
+        stage.showAndWait();
     }
 
     public void handleUpdateApp(ActionEvent actionEvent) {

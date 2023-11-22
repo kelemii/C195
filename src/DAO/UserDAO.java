@@ -1,10 +1,16 @@
 package DAO;
 
+import Model.Appointment;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
 
-import static DBConnection.JDBC.connection;
+import static Help.JDBC.connection;
 
 public class UserDAO {
     private static final String LOGIN_QUERY = "SELECT * FROM users WHERE User_Name = ? AND Password = ?";
@@ -29,5 +35,27 @@ public class UserDAO {
         }
 
         return userID;
+    }
+
+//    public ArrayList<Integer> getUserIDs() throws SQLException {
+//        return connection.prepareStatement("Select USER_ID FROM USERS");
+//    }
+    public ObservableList<Integer> getUserIDs() throws SQLException {
+        ObservableList<Integer> userIds = FXCollections.observableArrayList();
+
+        String sql = "SELECT USER_ID FROM client_schedule.users";
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                int userId = resultSet.getInt("USER_ID");
+                userIds.add(userId);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        Collections.reverse(userIds);
+        return userIds;
     }
 }

@@ -1,16 +1,12 @@
 package DAO;
 
-import DBConnection.JDBC;
 import Model.Appointment;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDateTime;
-import static DBConnection.JDBC.connection;
+import static Help.JDBC.connection;
 
 public class AppointmentDAO {
     public static ObservableList<Appointment> getAllAppointments() throws SQLException {
@@ -62,6 +58,42 @@ public class AppointmentDAO {
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setInt(1, appointmentId);
             return preparedStatement.executeUpdate();
+        }
+    }
+    public static void saveAppointment(Appointment appointment) throws SQLException {
+        String insertSql = "INSERT INTO appointments (Title, Description, Location, Type, Start, End, Create_Date, Created_By, Last_Update, Last_Updated_By, Customer_ID, User_ID, Contact_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS);
+
+            preparedStatement.setString(1, appointment.getTitle());
+            preparedStatement.setString(2, appointment.getDescription());
+            preparedStatement.setString(3, appointment.getLocation());
+            preparedStatement.setString(4, appointment.getType());
+            preparedStatement.setTimestamp(5, Timestamp.valueOf(appointment.getStart()));
+            preparedStatement.setTimestamp(6, Timestamp.valueOf(appointment.getEnd()));
+            preparedStatement.setTimestamp(7, Timestamp.valueOf(appointment.getCreateDate()));
+            preparedStatement.setString(8, appointment.getCreatedBy());
+            preparedStatement.setTimestamp(9, Timestamp.valueOf(appointment.getLastUpdate()));
+            preparedStatement.setString(10, appointment.getLastUpdatedBy());
+            preparedStatement.setInt(11, appointment.getCustomerId());
+            preparedStatement.setInt(12, appointment.getUserId());
+            preparedStatement.setInt(13, appointment.getContactId());
+
+            int affectedRows = preparedStatement.executeUpdate();
+
+            if (affectedRows > 0) {
+                try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        appointment.setAppointmentId(generatedKeys.getInt(1));
+                    } else {
+                        throw new SQLException("Creating appointment failed, no ID obtained.");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            // Handle any SQL exceptions here
+            e.printStackTrace();
         }
     }
 }
