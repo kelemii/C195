@@ -29,17 +29,19 @@ public class UpdateCustomer {
     private ComboBox<String> CustomerCountry, CustomerState;
 
     public void handleCustomerUpdate(ActionEvent actionEvent) throws SQLException {
-        int id = Integer.parseInt(CustomerID.getText());
-        String name = CustomerName.getText();
-        String address = CustomerAdd.getText();
-        String postalCode = CustomerZip.getText();
-        String division = CustomerState.getValue();
-        String phone = CustomerPhone.getText();
-        int divisionId = firstLevelDivisionDAO.getDivisionIdByName(CustomerState.getValue());
-        Customer newCustomer = new Customer(id, name, address, postalCode, phone, divisionId, division);
-        customerDAO.updateCustomer(newCustomer);
-        Stage stage = (Stage) customerCancel.getScene().getWindow();
-        stage.close();
+        if(validateForm()) {
+            int id = Integer.parseInt(CustomerID.getText());
+            String name = CustomerName.getText();
+            String address = CustomerAdd.getText();
+            String postalCode = CustomerZip.getText();
+            String division = CustomerState.getValue();
+            String phone = CustomerPhone.getText();
+            int divisionId = firstLevelDivisionDAO.getDivisionIdByName(CustomerState.getValue());
+            Customer newCustomer = new Customer(id, name, address, postalCode, phone, divisionId, division);
+            customerDAO.updateCustomer(newCustomer);
+            Stage stage = (Stage) customerCancel.getScene().getWindow();
+            stage.close();
+        }
     }
     public void initData(Customer selectedCustomer) throws SQLException {
         CustomerID.setText(String.valueOf(selectedCustomer.getCustomerId()));
@@ -84,5 +86,21 @@ public class UpdateCustomer {
         // Set the items in the CustomerState ComboBox
         CustomerState.setItems(stateNames);
     }
+    private boolean validateForm() {
+        if (CustomerName.getText().isEmpty() ||
+                CustomerAdd.getText().isEmpty() ||
+                CustomerZip.getText().isEmpty() ||
+                CustomerPhone.getText().isEmpty() ||
+                CustomerCountry.getValue() == null ||
+                CustomerState.getValue() == null) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Form Validation Error");
+            alert.setHeaderText("Validation Error");
+            alert.setContentText("Please ensure that all required fields are filled and a valid division is selected.");
+            alert.showAndWait();
+            return false; // At least one required field is empty
+        }
 
+        return true; // All required fields are filled, and the division is valid
+    }
 }
