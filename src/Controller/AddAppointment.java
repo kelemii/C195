@@ -17,6 +17,7 @@ import javafx.stage.Stage;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -122,28 +123,30 @@ public class AddAppointment {
 
 
     public void AddAppSave(ActionEvent actionEvent) throws SQLException {
-        int id = Integer.parseInt(AppointmentID.getText());
-        String title = AppointmentTitle.getText();
-        String description = AppointmentDesc.getText();
-        String location = AppointmentLoc.getText();
-        String type = AppointmentType.getText();
-        int customerId = getCustomerId(AppointmentCustomer.getValue());
-        int userId = AppointmentUser.getValue();
-        int contactId = getContactId(AppointmentContact.getValue());
+        if (validateForm()) {
+            int id = Integer.parseInt(AppointmentID.getText());
+            String title = AppointmentTitle.getText();
+            String description = AppointmentDesc.getText();
+            String location = AppointmentLoc.getText();
+            String type = AppointmentType.getText();
+            int customerId = getCustomerId(AppointmentCustomer.getValue());
+            int userId = AppointmentUser.getValue();
+            int contactId = getContactId(AppointmentContact.getValue());
 
-        LocalTime startT = LocalTime.parse(AppointmentStartT.getValue());
-        LocalTime endT = LocalTime.parse(AppointmentEndT.getValue());
+            LocalTime startT = LocalTime.parse(AppointmentStartT.getValue());
+            LocalTime endT = LocalTime.parse(AppointmentEndT.getValue());
 
-        LocalDateTime startDateTime = LocalDateTime.of(AppointmentStartD.getValue(), startT);
-        LocalDateTime endDateTime = LocalDateTime.of(AppointmentEndD.getValue(), endT);
-        LocalDateTime createDate = LocalDateTime.now();
-        String createdBy = "Admin";
-        LocalDateTime lastUpdate = LocalDateTime.now();
-        String lastUpdatedBy = "Admin";
-        Appointment newAppointment = new Appointment(id, title, description, location, type, startDateTime, endDateTime, createDate, createdBy, lastUpdate, lastUpdatedBy, customerId, userId, contactId);
-        appointmentDAO.saveAppointment(newAppointment);
-        Stage stage = (Stage) AddAppCancelBtn.getScene().getWindow();
-        stage.close();
+            LocalDateTime startDateTime = LocalDateTime.of(AppointmentStartD.getValue(), startT);
+            LocalDateTime endDateTime = LocalDateTime.of(AppointmentEndD.getValue(), endT);
+            LocalDateTime createDate = LocalDateTime.now();
+            String createdBy = "Admin";
+            LocalDateTime lastUpdate = LocalDateTime.now();
+            String lastUpdatedBy = "Admin";
+            Appointment newAppointment = new Appointment(id, title, description, location, type, startDateTime, endDateTime, createDate, createdBy, lastUpdate, lastUpdatedBy, customerId, userId, contactId);
+            appointmentDAO.saveAppointment(newAppointment);
+            Stage stage = (Stage) AddAppCancelBtn.getScene().getWindow();
+            stage.close();
+        }
     }
     public int getContactId(String contactName) throws SQLException {
         String sql = "SELECT CONTACT_ID FROM client_schedule.contacts WHERE Contact_Name = ?";
@@ -195,4 +198,42 @@ public class AddAppointment {
             stage.close();
         }
     }
-}
+    private boolean validateForm() {
+        if (AppointmentTitle.getText().isEmpty() ||
+                AppointmentDesc.getText().isEmpty() ||
+                AppointmentLoc.getText().isEmpty() ||
+                AppointmentType.getText().isEmpty() ||
+                AppointmentStartD.getValue() == null ||
+                AppointmentEndD.getValue() == null ||
+                AppointmentStartT.getValue() == null ||
+                AppointmentEndT.getValue() == null ||
+                AppointmentContact.getValue() == null ||
+                AppointmentCustomer.getValue() == null ||
+                AppointmentUser.getValue() == null) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Form Validation Error");
+            alert.setHeaderText("Required fields are empty");
+            alert.setContentText("Please fill in all required fields.");
+            alert.showAndWait();
+            return false; // At least one required field is empty
+        }
+        LocalDate startDate = AppointmentStartD.getValue();
+        LocalDate endDate = AppointmentEndD.getValue();
+        LocalTime startTime = LocalTime.parse(AppointmentStartT.getValue());
+        LocalTime endTime = LocalTime.parse(AppointmentEndT.getValue());
+
+        LocalDateTime startDateTime = LocalDateTime.of(startDate, startTime);
+        LocalDateTime endDateTime = LocalDateTime.of(endDate, endTime);
+        if (startDateTime.isAfter(endDateTime)) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Form Validation Error");
+            alert.setHeaderText("Start must be before end");
+            alert.setContentText("Please fill in all required fields.");
+            alert.showAndWait();
+            return false; // Start date is after the end date
+        }
+
+        return true; // All required fields are filled and the start date is before the end date
+    }
+    }
+
