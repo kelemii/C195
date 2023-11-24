@@ -45,9 +45,9 @@ public class AddCustomer {
         String address = CustomerAdd.getText();
         String postalCode = CustomerZip.getText();
         String phone = CustomerPhone.getText();
-        String divison = CustomerState.getValue();
+        String division = CustomerState.getValue();
         int divisionId = firstLevelDivisionDAO.getDivisionIdByName(CustomerState.getValue());
-        Customer customer = new Customer(id, name, address, postalCode, phone, divisionId, divison);
+        Customer customer = new Customer(id, name, address, postalCode, phone, divisionId, division);
         customerDao.saveCustomer(customer);
         Stage stage = (Stage) customerSave.getScene().getWindow();
         stage.close();

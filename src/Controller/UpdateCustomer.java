@@ -1,35 +1,54 @@
 package Controller;
 
+import DAO.CustomerDAO;
+import DAO.FirstLevelDivisionDAO;
 import Model.Appointment;
+import Model.Customer;
+import Model.FirstLevelDivision;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class UpdateCustomer {
+    FirstLevelDivisionDAO firstLevelDivisionDAO;
+    CustomerDAO customerDAO;
     @FXML
-    private Button customerRecordsCancel;
+    private Button customerCancel,customerSave;
+    @FXML
+    private TextField CustomerID, CustomerName, CustomerAdd, CustomerZip, CustomerPhone;
+    @FXML
+    private ComboBox<String> CustomerCountry, CustomerState;
 
-    public void handleCustomerUpdate(ActionEvent actionEvent) {
+    public void handleCustomerUpdate(ActionEvent actionEvent) throws SQLException {
+        int id = Integer.parseInt(CustomerID.getText());
+        String name = CustomerName.getText();
+        String address = CustomerAdd.getText();
+        String postalCode = CustomerZip.getText();
+        String division = CustomerState.getValue();
+        String phone = CustomerPhone.getText();
+        int divisionId = firstLevelDivisionDAO.getDivisionIdByName(CustomerState.getValue());
+        Customer newCustomer = new Customer(id, name, address, postalCode, phone, divisionId, division);
+        customerDAO.updateCustomer(newCustomer);
+        Stage stage = (Stage) customerCancel.getScene().getWindow();
+        stage.close();
     }
-    public void initData(Appointment selectedAppointment) throws SQLException {
-        AppointmentID.setText(String.valueOf(selectedAppointment.getAppointmentId()));
-        AppointmentTitle.setText(selectedAppointment.getTitle());
-        AppointmentDesc.setText(selectedAppointment.getDescription());
-        AppointmentLoc.setText(selectedAppointment.getLocation());
-        AppointmentType.setText(selectedAppointment.getType());
-        AppointmentStartD.setValue(selectedAppointment.getStart().toLocalDate());
-        AppointmentEndD.setValue(selectedAppointment.getEnd().toLocalDate());
-        AppointmentStartT.setValue(String.valueOf(selectedAppointment.getStart().toLocalTime()));
-        AppointmentEndT.setValue(String.valueOf(selectedAppointment.getEnd().toLocalTime()));
-        AppointmentCustomer.setValue(getCustomerName(selectedAppointment.getCustomerId())); // Assuming you have a method to get customer name
-        AppointmentUser.setValue(selectedAppointment.getUserId()); // Assuming you have a method to get user name
-        AppointmentContact.setValue(getContactName(selectedAppointment.getContactId()));
+    public void initData(Customer selectedCustomer) throws SQLException {
+        CustomerID.setText(String.valueOf(selectedCustomer.getCustomerId()));
+        CustomerName.setText(selectedCustomer.getCustomerName());
+        CustomerAdd.setText(selectedCustomer.getAddress());
+        CustomerZip.setText(selectedCustomer.getPostalCode());
+        CustomerPhone.setText(selectedCustomer.getPhone());
+        CustomerCountry.setValue(customerDAO.getCountryIdByDivisionName(selectedCustomer.getDivision())); //this needs a query to identify the country code and a conversion into the string
+        CustomerState.setValue(selectedCustomer.getDivision());
     }
 
     public void handleCustomerCancel(ActionEvent actionEvent) {
@@ -39,8 +58,31 @@ public class UpdateCustomer {
         alert.setContentText("All unsaved changes will be lost.");
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
-            Stage stage = (Stage) customerRecordsCancel.getScene().getWindow();
+            Stage stage = (Stage) customerCancel.getScene().getWindow();
             stage.close();
         }
     }
+    public void populateStateComboBoxes() throws SQLException {
+        System.out.println("populating states");
+        ObservableList<FirstLevelDivision> states1 = FXCollections.observableArrayList();
+
+        if (CustomerCountry.getValue() != null) {
+            if (CustomerCountry.getValue().equals("US")) {
+                states1.setAll(firstLevelDivisionDAO.getAllDivisions("1"));
+            } else if (CustomerCountry.getValue().equals("UK")) {
+                states1.setAll(firstLevelDivisionDAO.getAllDivisions("2"));
+            } else if (CustomerCountry.getValue().equals("Canada")) {
+                states1.setAll(firstLevelDivisionDAO.getAllDivisions("3"));
+            }
+        }
+
+        ObservableList<String> stateNames = FXCollections.observableArrayList();
+
+        // Extract division names from the FirstLevelDivision objects and add them to stateNames
+        stateNames.addAll(states1.stream().map(FirstLevelDivision::getDivision).collect(Collectors.toList()));
+
+        // Set the items in the CustomerState ComboBox
+        CustomerState.setItems(stateNames);
+    }
+
 }

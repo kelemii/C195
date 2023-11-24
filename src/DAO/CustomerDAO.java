@@ -8,6 +8,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+
 import static Help.JDBC.connection;
 
 public class CustomerDAO {
@@ -60,14 +63,6 @@ public class CustomerDAO {
     public static int saveCustomer(Customer customer) throws SQLException {
         String  query = "INSERT INTO customers (Customer_Name, Address, Postal_Code, Phone, Division_ID) VALUES (?, ?, ?, ?, ?)";
 
-//        if (customer.getCustomerId() == 0) {
-//            // Insert a new customer
-//            query = "INSERT INTO customers (Customer_Name, Address, Postal_Code, Phone, Division_ID) VALUES (?, ?, ?, ?, ?)";
-//        } else {
-//            // Update an existing customer
-//            query = "UPDATE customers SET Customer_Name = ?, Address = ?, Postal_Code = ?, Phone = ?, Division_ID = ? WHERE Customer_ID = ?";
-//        }
-
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, customer.getCustomerName());
@@ -107,6 +102,7 @@ public class CustomerDAO {
             preparedStatement.setString(3, customer.getPostalCode());
             preparedStatement.setString(4, customer.getPhone());
             preparedStatement.setInt(5, customer.getDivisionId());
+            preparedStatement.setInt(6, customer.getCustomerId());
 
             int affectedRows = preparedStatement.executeUpdate();
 
@@ -128,6 +124,30 @@ public class CustomerDAO {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    public static String getCountryIdByDivisionName(String division) throws SQLException {
+        String sql = "SELECT Country_ID FROM first_level_divisions WHERE Division = ?";
+        int countryId = -1;
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, division);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                countryId = resultSet.getInt("Country_ID");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Handle exception
+        }
+        Map<Integer, String> countryIdToCodeMap = new HashMap<>();
+        countryIdToCodeMap.put(1, "US");
+        countryIdToCodeMap.put(2, "UK");
+        countryIdToCodeMap.put(3, "Canada");
+
+        return countryIdToCodeMap.get(countryId);
     }
 }
 
