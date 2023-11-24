@@ -10,6 +10,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
@@ -28,6 +29,10 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import static Help.JDBC.connection;
+
+
+/// next steps are to create reports, and validate that a user does not have any appointments when before deleting, if they have appointments they have to be deleted FIRST, then customer can be deleted.
+
 
 public class Main implements Initializable {
     private int currentUserID;
@@ -151,8 +156,24 @@ public class Main implements Initializable {
     public void handleReports(ActionEvent actionEvent) {
     }
 
-    public void handleLogout(ActionEvent actionEvent) {
+    public void handleLogout(ActionEvent actionEvent) throws IOException {
+        // Clear user session data
+        currentUserID = 0;
+//        currentUserName = null;
+
+        // Load the login page
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("/View/Login.fxml"));
+        Parent root = loader.load();
+
+        // Get the stage and set the login scene
+        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.setTitle("Login");
+        stage.show();
     }
+
 
     public void handleAddCust(ActionEvent actionEvent) throws IOException, SQLException {
         FXMLLoader loader = new FXMLLoader();
