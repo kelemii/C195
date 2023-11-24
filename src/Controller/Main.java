@@ -154,7 +154,7 @@ public class Main implements Initializable {
     public void handleLogout(ActionEvent actionEvent) {
     }
 
-    public void handleAddCust(ActionEvent actionEvent) throws IOException {
+    public void handleAddCust(ActionEvent actionEvent) throws IOException, SQLException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("/View/AddCustomer.fxml"));
         Parent root = loader.load();
@@ -165,12 +165,60 @@ public class Main implements Initializable {
         stage.setTitle("Add New Customer");
         stage.setScene(new Scene(root));
         stage.showAndWait();
+        initializeCustomers();
     }
 
-    public void handleUpdateCust(ActionEvent actionEvent) {
+    public void handleUpdateCust(ActionEvent actionEvent) throws SQLException, IOException {
+        Customer selectedCustomer = customersTable.getSelectionModel().getSelectedItem();
+
+        if (selectedCustomer != null) {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/View/UpdateCustomer.fxml"));
+            Parent root = loader.load();
+
+            // Access the controller for the second view
+            UpdateCustomer updateCustomerController = loader.getController();
+
+            // Pass the data to the second view's controller
+            updateCustomerController.initData(selectedCustomer);
+
+            // Create a new stage for the second view
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Update Customer");
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+            initializeCustomers();
+        }
     }
 
     public void handleDeleteCust(ActionEvent actionEvent) {
+        Customer selectedCustomer = customersTable.getSelectionModel().getSelectedItem();
+
+        if (selectedCustomer != null) {
+            System.out.println(selectedCustomer.getCustomerId());
+            int customerId = selectedCustomer.getCustomerId();
+
+            // Call the DAO method to delete the appointment from the database
+            try {
+                int rowsAffected = CustomerDAO.deleteCustomer(customerId);
+
+                if (rowsAffected > 0) {
+                    // Remove the appointment from the ObservableList
+                    customersTable.getItems().remove(selectedCustomer);
+
+                    // Refresh the TableView to reflect the changes
+                    customersTable.refresh();
+                } else {
+                    // Handle the case where deletion fails (e.g., show an error message)
+                    // You can display an alert or log an error message here
+                    System.err.println("Failed to delete customer from the database.");
+                }
+            } catch (SQLException e) {
+                // Handle any exceptions that occur during deletion
+                e.printStackTrace(); // You can log the error or handle it based on your application's needs
+            }
+        }
     }
     public void handleAllAppointments(ActionEvent actionEvent) throws SQLException {
         initializeAppointments();

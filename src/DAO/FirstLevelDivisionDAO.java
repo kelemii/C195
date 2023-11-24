@@ -43,5 +43,20 @@ public class FirstLevelDivisionDAO {
         }
         return divisions;
     }
+    public static int getDivisionIdByName(String divisionName) throws SQLException {
+        String sql = "SELECT Division_ID FROM client_schedule.first_level_divisions WHERE Division = ?";
+        int divisionId = -1; // Default value if division is not found
 
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, divisionName);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                divisionId = resultSet.getInt("Division_ID");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return divisionId;
+    }
 }

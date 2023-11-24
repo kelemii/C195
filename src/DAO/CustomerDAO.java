@@ -43,16 +43,91 @@ public class CustomerDAO {
      * Deletes an appointment based on the appointment ID.
      *
      * @param appointmentId The ID of the appointment to delete
-     * @param connection    The database connection object
      * @return The number of rows affected
      * @throws SQLException If a database access error occurs, this method is called on a closed PreparedStatement, or the given SQL statement produces anything other than a single ResultSet object
      */
-    public static int deleteCustomer(int appointmentId, Connection connection) throws SQLException {
-        String query = "DELETE FROM appointments WHERE Appointment_ID = ?";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+    public static int deleteCustomer(int appointmentId) throws SQLException {
+        String query = "DELETE FROM customers WHERE Customer_ID = ?";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setInt(1, appointmentId);
             return preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        return 0;
+    }
+    public static int saveCustomer(Customer customer) throws SQLException {
+        String  query = "INSERT INTO customers (Customer_Name, Address, Postal_Code, Phone, Division_ID) VALUES (?, ?, ?, ?, ?)";
+
+//        if (customer.getCustomerId() == 0) {
+//            // Insert a new customer
+//            query = "INSERT INTO customers (Customer_Name, Address, Postal_Code, Phone, Division_ID) VALUES (?, ?, ?, ?, ?)";
+//        } else {
+//            // Update an existing customer
+//            query = "UPDATE customers SET Customer_Name = ?, Address = ?, Postal_Code = ?, Phone = ?, Division_ID = ? WHERE Customer_ID = ?";
+//        }
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, customer.getCustomerName());
+            preparedStatement.setString(2, customer.getAddress());
+            preparedStatement.setString(3, customer.getPostalCode());
+            preparedStatement.setString(4, customer.getPhone());
+            preparedStatement.setInt(5, customer.getDivisionId());
+
+            int affectedRows = preparedStatement.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new SQLException("Customer saving failed, no rows affected.");
+            }
+
+            if (customer.getCustomerId() == 0) {
+                // If it's a new customer, get the generated customer ID
+                ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    customer.setCustomerId(generatedKeys.getInt(1));
+                } else {
+                    throw new SQLException("Customer saving failed, no ID obtained.");
+                }
+            }
+            return customer.getCustomerId();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+    public static int updateCustomer(Customer customer) throws SQLException {
+        String query = "UPDATE customers SET Customer_Name = ?, Address = ?, Postal_Code = ?, Phone = ?, Division_ID = ? WHERE Customer_ID = ?";
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, customer.getCustomerName());
+            preparedStatement.setString(2, customer.getAddress());
+            preparedStatement.setString(3, customer.getPostalCode());
+            preparedStatement.setString(4, customer.getPhone());
+            preparedStatement.setInt(5, customer.getDivisionId());
+
+            int affectedRows = preparedStatement.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new SQLException("Customer saving failed, no rows affected.");
+            }
+
+            if (customer.getCustomerId() == 0) {
+                // If it's a new customer, get the generated customer ID
+                ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    customer.setCustomerId(generatedKeys.getInt(1));
+                } else {
+                    throw new SQLException("Customer saving failed, no ID obtained.");
+                }
+            }
+            return customer.getCustomerId();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 }
 
