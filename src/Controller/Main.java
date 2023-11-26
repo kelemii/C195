@@ -13,6 +13,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -244,20 +245,24 @@ public class Main implements Initializable {
     }
 
     public void handleDeleteCust(ActionEvent actionEvent) {
+        //•  When a customer record is deleted, a custom message should display in the user interface.
         Customer selectedCustomer = customersTable.getSelectionModel().getSelectedItem();
 
         if (selectedCustomer != null) {
-            System.out.println(selectedCustomer.getCustomerId());
             int customerId = selectedCustomer.getCustomerId();
 
             // Call the DAO method to delete the appointment from the database
             try {
                 int rowsAffected = CustomerDAO.deleteCustomer(customerId);
-
                 if (rowsAffected > 0) {
-                    // Remove the appointment from the ObservableList
+                    // Remove the customer from the ObservableList
                     customersTable.getItems().remove(selectedCustomer);
-
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Customer Deleted");
+                    alert.setHeaderText("Customer has been removed from database.");
+//                    String alertmsg = selectedCustomer.getCustomerName() + "has been removed";
+                    alert.setContentText(selectedCustomer.getCustomerName() + " has been removed.");
+                    alert.showAndWait();
                     // Refresh the TableView to reflect the changes
                     customersTable.refresh();
                 } else {
