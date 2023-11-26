@@ -33,7 +33,7 @@ import static Help.JDBC.connection;
 
 
 /// next steps are to create reports, and validate that a user does not have any appointments when before deleting, if they have appointments they have to be deleted FIRST, then customer can be deleted.
-//•  When a customer record is deleted, a custom message should display in the user interface.
+//•  When a customer record is deleted, a custom message should display in the user interface. DONE
 //•  A custom message is displayed in the user interface with the Appointment_ID and type of appointment canceled.
 //•  All of the original appointment information is displayed on the update form in local time zone.
 // c.  Write code that enables the user to adjust appointment times. While the appointment times should be stored in Coordinated Universal Time (UTC), they should be automatically and consistently updated according to the local time zone set on the user’s computer wherever appointments are displayed in the application.
@@ -169,6 +169,12 @@ public class Main implements Initializable {
                 if (rowsAffected > 0) {
                     // Remove the appointment from the ObservableList
                     appointmentsTable.getItems().remove(selectedAppointment);
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Appointment Deleted");
+                    alert.setHeaderText("Appointment has been removed from database.");
+//                    String alertmsg = selectedCustomer.getCustomerName() + "has been removed";
+                    alert.setContentText(selectedAppointment.getAppointmentId() + " " + selectedAppointment.getType() + " has been removed.");
+                    alert.showAndWait();
 
                     // Refresh the TableView to reflect the changes
                     appointmentsTable.refresh();
