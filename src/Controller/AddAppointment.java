@@ -25,7 +25,10 @@ import java.util.ResourceBundle;
 
 
 import static Help.JDBC.connection;
-
+/**
+ * The `AddAppointment` class controls the UI for adding new appointments.
+ * It allows users to input appointment details and save them to the database.
+ */
 public class AddAppointment {
     @FXML
     private TextField AppointmentID;
@@ -50,6 +53,11 @@ public class AddAppointment {
     private AppointmentDAO appointmentDAO;
     private UserDAO userDAO = new UserDAO();
     private ContactDAO contactDAO;
+    /**
+     * Initializes the AddAppointment controller.
+     *
+     * @throws SQLException If an SQL exception occurs while populating data.
+     */
     @FXML
     public void initialize() throws SQLException {
         populateContacts();
@@ -58,6 +66,12 @@ public class AddAppointment {
         populateUserList();
         identifyNextID();
     }
+
+    /**
+     * Populates the contact selection ComboBox.
+     *
+     * @throws SQLException If an SQL exception occurs while retrieving contact data.
+     */
     private void populateContacts() throws SQLException {
         ObservableList<Contact> contactsList;
         ObservableList<String> contactNamesList = FXCollections.observableArrayList();
@@ -65,6 +79,11 @@ public class AddAppointment {
         contactsList.forEach(contact -> contactNamesList.add(contact.getContactName()));
         AppointmentContact.setItems(contactNamesList);
     }
+    /**
+     * Populates the customer selection ComboBox.
+     *
+     * @throws SQLException If an SQL exception occurs while retrieving customer data.
+     */
     private void populateCustomers() throws SQLException {
         ObservableList<Customer> customerList;
         ObservableList<String> customerNamesList = FXCollections.observableArrayList();
@@ -73,6 +92,9 @@ public class AddAppointment {
         AppointmentCustomer.setItems(customerNamesList);
     }
 
+    /**
+     * Identifies the next available appointment ID.
+     */
     private void identifyNextID() {
             String sql = "SELECT AUTO_INCREMENT \n" +
                     "FROM information_schema.TABLES \n" +
@@ -94,15 +116,19 @@ public class AddAppointment {
             }
         }
 
-
+    /**
+     * Populates the user selection ComboBox.
+     *
+     * @throws SQLException If an SQL exception occurs while retrieving user data.
+     */
     public void populateUserList() throws SQLException {
         ObservableList<Integer> usersList = FXCollections.observableArrayList();
         usersList = userDAO.getUserIDs();
         AppointmentUser.setItems(userDAO.getUserIDs());
     }
-
-
-
+    /**
+     * Populates the time selection ComboBoxes with appointment times.
+     */
     public void populateTimeComboBoxes() {
         ObservableList<String> appointmentTimes = FXCollections.observableArrayList();
         ZoneId easternZone = ZoneId.of("US/Eastern");  // Set the timezone to Eastern Time (ET)
@@ -125,10 +151,12 @@ public class AddAppointment {
         AppointmentStartT.setItems(appointmentTimes);
         AppointmentEndT.setItems(appointmentTimes);
     }
-
-
-
-
+    /**
+     * Handles the action to save a new appointment.
+     *
+     * @param actionEvent The ActionEvent triggered by the user.
+     * @throws SQLException If an SQL exception occurs while saving the appointment.
+     */
 
     public void AddAppSave(ActionEvent actionEvent) throws SQLException {
         if (validateForm()) {
@@ -161,8 +189,13 @@ public class AddAppointment {
             stage.close();
         }
     }
-
-
+    /**
+     * Retrieves the contact ID based on the contact name.
+     *
+     * @param contactName The name of the contact.
+     * @return The ID of the contact, or -1 if not found.
+     * @throws SQLException If an SQL exception occurs while retrieving the contact ID.
+     */
     public int getContactId(String contactName) throws SQLException {
         String sql = "SELECT CONTACT_ID FROM client_schedule.contacts WHERE Contact_Name = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -182,6 +215,13 @@ public class AddAppointment {
         }
         return preparedStatement.executeQuery().getInt("CONTACT_ID");
     }
+    /**
+     * Retrieves the customer ID based on the customer name.
+     *
+     * @param customerName The name of the customer.
+     * @return The ID of the customer, or -1 if not found.
+     * @throws SQLException If an SQL exception occurs while retrieving the customer ID.
+     */
     public int getCustomerId(String customerName) throws SQLException {
         String sql = "SELECT CUSTOMER_ID FROM client_schedule.customers WHERE Customer_Name = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -201,7 +241,11 @@ public class AddAppointment {
         }
         return preparedStatement.executeQuery().getInt("CUSTOMER_ID");
     }
-
+    /**
+     * Handles the action to cancel adding a new appointment.
+     *
+     * @param actionEvent The ActionEvent triggered by the user.
+     */
     public void AddAppCancel(ActionEvent actionEvent) {
         ResourceBundle resourceBundle = ResourceBundle.getBundle("lang/cancelConfirmation", Locale.getDefault());
 
@@ -217,6 +261,11 @@ public class AddAppointment {
         }
     }
 
+    /**
+     * Validates the appointment form data.
+     *
+     * @return True if the form data is valid, otherwise false.
+     */
     private boolean validateForm() {
         if (AppointmentTitle.getText().isEmpty() ||
                 AppointmentDesc.getText().isEmpty() ||
