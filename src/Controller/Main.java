@@ -34,12 +34,11 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import static Help.JDBC.connection;
-
-
-//D.  Provide descriptive Javadoc comments for at least 70 percent of the classes and their members throughout the code, and create an index.html file of your comments to include with your submission based on Oracle’s guidelines for the Javadoc tool best practices. Your comments should include a justification for each lambda expression in the method where it is used.
-
+/**
+ * The `Main` class controls the main application functionality.
+ * It manages appointments and customers, including listing, adding, updating, and deleting them.
+ */
 public class Main implements Initializable {
-    private int currentUserID;
 
     @FXML
     private TableView<Appointment> appointmentsTable;
@@ -48,10 +47,11 @@ public class Main implements Initializable {
     @FXML
     private TableColumn<?, ?> AppointmentID, AppointmentTitle, AppointmentType, AppointmentDescription, AppointmentLocation, AppointmentStart, AppointmentEnd, AppContact, AppCustID, AppUserID, CustID, CustName, CustAdd, CustPhone, CustState, CustZip;
 
-    public void setCurrentUserID(int currentUserID) {
-        this.currentUserID = currentUserID;
-    }
-
+    /**
+     * Initializes the appointments table with data from the database.
+     *
+     * @throws SQLException If an SQL exception occurs.
+     */
     public void initializeAppointments() throws SQLException {
         List<Appointment> allAppointments = AppointmentDAO.getAllAppointments();
         List<Appointment> modifiedAppointments = new ArrayList<>();
@@ -87,7 +87,11 @@ public class Main implements Initializable {
         AppUserID.setCellValueFactory(new PropertyValueFactory<>("UserId"));
         appointmentsTable.setItems(appointmentData);
     }
-
+    /**
+     * Initializes the customers table with data from the database.
+     *
+     * @throws SQLException If an SQL exception occurs.
+     */
 
     public void initializeCustomers() throws SQLException {
         ObservableList<Customer> customerData = FXCollections.observableArrayList();
@@ -101,8 +105,11 @@ public class Main implements Initializable {
         customersTable.setItems(customerData);
     }
 
+    /**
+     *initializes the tables
+     */
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public void initialize(URL url, ResourceBundle resourceBundle){
         // Initialize tables
         try {
             initializeAppointments();
@@ -111,6 +118,13 @@ public class Main implements Initializable {
             throw new RuntimeException(e);
         }
     }
+    /**
+     * Handles adding a new appointment.
+     *
+     * @param actionEvent The ActionEvent triggered by the user.
+     * @throws IOException  If an I/O error occurs.
+     * @throws SQLException If an SQL exception occurs.
+     */
     public void handleNewApp(ActionEvent actionEvent) throws IOException, SQLException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("/View/AddAppointment.fxml"));
@@ -124,7 +138,13 @@ public class Main implements Initializable {
         stage.showAndWait();
         initializeAppointments();
     }
-
+    /**
+     * Handles updating an existing appointment.
+     *
+     * @param actionEvent The ActionEvent triggered by the user.
+     * @throws IOException  If an I/O error occurs.
+     * @throws SQLException If an SQL exception occurs.
+     */
     public void handleUpdateApp(ActionEvent actionEvent) throws IOException, SQLException {
         Appointment selectedAppointment = appointmentsTable.getSelectionModel().getSelectedItem();
 
@@ -149,7 +169,11 @@ public class Main implements Initializable {
         }
     }
 
-
+    /**
+     * Handles deleting an appointment.
+     *
+     * @param actionEvent The ActionEvent triggered by the user.
+     */
     public void handleDeleteApp(ActionEvent actionEvent) {
         Appointment selectedAppointment = appointmentsTable.getSelectionModel().getSelectedItem();
 
@@ -184,7 +208,12 @@ public class Main implements Initializable {
             }
         }
     }
-
+    /**
+     * Handles generating reports.
+     *
+     * @param actionEvent The ActionEvent triggered by the user.
+     * @throws IOException If an I/O error occurs.
+     */
     public void handleReports(ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("/View/Reports.fxml"));
@@ -198,12 +227,13 @@ public class Main implements Initializable {
         stage.showAndWait();
 //        initializeAppointments();
     }
-
+    /**
+     * Handles user logout.
+     *
+     * @param actionEvent The ActionEvent triggered by the user.
+     * @throws IOException If an I/O error occurs.
+     */
     public void handleLogout(ActionEvent actionEvent) throws IOException {
-        // Clear user session data
-        currentUserID = 0;
-//        currentUserName = null;
-
         // Load the login page
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("/View/Login.fxml"));
@@ -216,8 +246,13 @@ public class Main implements Initializable {
         stage.setTitle("Login");
         stage.show();
     }
-
-
+    /**
+     * Handles adding a new customer.
+     *
+     * @param actionEvent The ActionEvent triggered by the user.
+     * @throws IOException  If an I/O error occurs.
+     * @throws SQLException If an SQL exception occurs.
+     */
     public void handleAddCust(ActionEvent actionEvent) throws IOException, SQLException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("/View/AddCustomer.fxml"));
@@ -231,7 +266,13 @@ public class Main implements Initializable {
         stage.showAndWait();
         initializeCustomers();
     }
-
+    /**
+     * Handles updating an existing customer.
+     *
+     * @param actionEvent The ActionEvent triggered by the user.
+     * @throws SQLException If an SQL exception occurs.
+     * @throws IOException  If an I/O error occurs.
+     */
     public void handleUpdateCust(ActionEvent actionEvent) throws SQLException, IOException {
         Customer selectedCustomer = customersTable.getSelectionModel().getSelectedItem();
 
@@ -255,46 +296,52 @@ public class Main implements Initializable {
             initializeCustomers();
         }
     }
-
+    /**
+     * Handles deleting a customer.
+     *
+     * @param actionEvent The ActionEvent triggered by the user.
+     */
     public void handleDeleteCust(ActionEvent actionEvent) {
-        //•  When a customer record is deleted, a custom message should display in the user interface.
         Customer selectedCustomer = customersTable.getSelectionModel().getSelectedItem();
-
         if (selectedCustomer != null) {
             int customerId = selectedCustomer.getCustomerId();
-
-            // Call the DAO method to delete the appointment from the database
             try {
                 int rowsAffected = CustomerDAO.deleteCustomer(customerId);
                 if (rowsAffected > 0) {
-                    // Remove the customer from the ObservableList
                     customersTable.getItems().remove(selectedCustomer);
                     ResourceBundle resourceBundle = ResourceBundle.getBundle("lang/main", Locale.getDefault());
-
                     String successMessage = resourceBundle.getString("Customer_Deleted_Message");
                     String successTitle = resourceBundle.getString("Customer_Deleted_Title");
                     String successHeader = resourceBundle.getString("Customer_Deleted_Header");
-
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle(successTitle);
                     alert.setHeaderText(successHeader); // No header text
                     alert.setContentText(selectedCustomer.getCustomerName() + " " + successMessage);
                     alert.showAndWait();
                 } else {
-                    // Handle the case where deletion fails (e.g., show an error message)
-                    // You can display an alert or log an error message here
                     System.err.println("Failed to delete customer from the database.");
                 }
             } catch (SQLException e) {
-                // Handle any exceptions that occur during deletion
-                e.printStackTrace(); // You can log the error or handle it based on your application's needs
+                e.printStackTrace();
             }
         }
     }
+
+    /**
+     * Handles filtering and displaying all appointments.
+     *
+     * @param actionEvent The ActionEvent triggered by the user.
+     * @throws SQLException If an SQL exception occurs.
+     */
     public void handleAllAppointments(ActionEvent actionEvent) throws SQLException {
         initializeAppointments();
     }
-
+    /**
+     * Handles filtering and displaying appointments for the current month.
+     *
+     * @param actionEvent The ActionEvent triggered by the user.
+     * @throws SQLException If an SQL exception occurs.
+     */
     public void handleCurrentMonth(ActionEvent actionEvent) throws SQLException {
 
         LocalDate currentDate = LocalDate.now();
@@ -325,7 +372,12 @@ public class Main implements Initializable {
 
         appointmentsTable.setItems(FXCollections.observableArrayList(filteredAppointments));
     }
-
+    /**
+     * Handles filtering and displaying appointments for the current week.
+     *
+     * @param actionEvent The ActionEvent triggered by the user.
+     * @throws SQLException If an SQL exception occurs.
+     */
     public void handleCurrentWeek(ActionEvent actionEvent) throws SQLException {
         LocalDate currentDate = LocalDate.now();
         LocalDate endOfWeek = currentDate.plusDays(6 - currentDate.getDayOfWeek().getValue());
@@ -357,4 +409,5 @@ public class Main implements Initializable {
         appointmentsTable.setItems(FXCollections.observableArrayList(filteredAppointments));
 
     }
+
 }
