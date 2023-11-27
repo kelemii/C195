@@ -25,6 +25,9 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -34,23 +37,30 @@ import static Help.JDBC.connection;
 
 /// next steps are to create reports, and validate that a user does not have any appointments when before deleting, if they have appointments they have to be deleted FIRST, then customer can be deleted.
 //•  When a customer record is deleted, a custom message should display in the user interface. DONE
-//•  A custom message is displayed in the user interface with the Appointment_ID and type of appointment canceled.
+//•  A custom message is displayed in the user interface with the Appointment_ID and type of appointment canceled. DONE
 //•  All of the original appointment information is displayed on the update form in local time zone.
+
 // c.  Write code that enables the user to adjust appointment times. While the appointment times should be stored in Coordinated Universal Time (UTC), they should be automatically and consistently updated according to the local time zone set on the user’s computer wherever appointments are displayed in the application.
 // Note: There are up to three time zones in effect. Coordinated Universal Time (UTC) is used for storing the time in the database, the user’s local time is used for display purposes, and Eastern Time (ET) is used for the company’s office hours. Local time will be checked against ET business hours before they are stored in the database as UTC.
+
 //d.  Write code to implement input validation and logical error checks to prevent each of the following changes when adding or updating information; display a custom message specific for each error check in the user interface:
 //•  scheduling an appointment outside of business hours defined as 8:00 a.m. to 10:00 p.m. ET, including weekends
 //•  scheduling overlapping appointments for customers
 //•  entering an incorrect username and password
+
 //e.  Write code to provide an alert when there is an appointment within 15 minutes of the user’s log-in. A custom message should be displayed in the user interface and include the appointment ID, date, and time. If the user does not have any appointments within 15 minutes of logging in, display a custom message in the user interface indicating there are no upcoming appointments.
 //Note: Since evaluation may be testing your application outside of business hours, your alerts must be robust enough to trigger an appointment within 15 minutes of the local time set on the user’s computer, which may or may not be ET.
+
 //f.  Write code that generates accurate information in each of the following reports and will display the reports in the user interface:
 //Note: You do not need to save and print the reports to a file or provide a screenshot.
 //•  the total number of customer appointments by type and month
 //•  a schedule for each contact in your organization that includes appointment ID, title, type and description, start date and time, end date and time, and customer ID
 //•  an additional report of your choice that is different from the two other required reports in this prompt and from the user log-in date and time stamp that will be tracked in part C
+
 //C.  Write code that provides the ability to track user activity by recording all user log-in attempts, dates, and time stamps and whether each attempt was successful in a file named login_activity.txt. Append each new record to the existing file, and save to the root folder of the application.
+
 //D.  Provide descriptive Javadoc comments for at least 70 percent of the classes and their members throughout the code, and create an index.html file of your comments to include with your submission based on Oracle’s guidelines for the Javadoc tool best practices. Your comments should include a justification for each lambda expression in the method where it is used.
+
 //Note: The comments on the lambda need to be located in the comments describing the method where it is located for it to export properly.
 //E.  Create a README.txt file that includes the following information:
 //
@@ -80,8 +90,28 @@ public class Main implements Initializable {
     }
 
     public void initializeAppointments() throws SQLException {
-        ObservableList<Appointment> appointmentData = FXCollections.observableArrayList();
-        appointmentData.addAll(AppointmentDAO.getAllAppointments());
+        List<Appointment> allAppointments = AppointmentDAO.getAllAppointments();
+        List<Appointment> modifiedAppointments = new ArrayList<>();
+
+        ZoneId localZone = ZoneId.systemDefault();
+
+        for (Appointment appointment : allAppointments) {
+            LocalDateTime startUTC = appointment.getStart();
+            LocalDateTime endUTC = appointment.getEnd();
+
+            // Convert UTC times to local timezone
+            ZonedDateTime startLocal = startUTC.atZone(ZoneId.of("UTC")).withZoneSameInstant(localZone);
+            ZonedDateTime endLocal = endUTC.atZone(ZoneId.of("UTC")).withZoneSameInstant(localZone);
+
+            // Update appointment start and end times with local times
+            appointment.setStart(startLocal.toLocalDateTime());
+            appointment.setEnd(endLocal.toLocalDateTime());
+
+            modifiedAppointments.add(appointment);
+        }
+
+        ObservableList<Appointment> appointmentData = FXCollections.observableArrayList(modifiedAppointments);
+
         AppointmentID.setCellValueFactory(new PropertyValueFactory<>("AppointmentId"));
         AppointmentTitle.setCellValueFactory(new PropertyValueFactory<>("Title"));
         AppointmentType.setCellValueFactory(new PropertyValueFactory<>("Type"));
@@ -94,6 +124,7 @@ public class Main implements Initializable {
         AppUserID.setCellValueFactory(new PropertyValueFactory<>("UserId"));
         appointmentsTable.setItems(appointmentData);
     }
+
 
     public void initializeCustomers() throws SQLException {
         ObservableList<Customer> customerData = FXCollections.observableArrayList();
