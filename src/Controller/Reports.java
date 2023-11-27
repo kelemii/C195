@@ -11,7 +11,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -24,6 +23,10 @@ import java.util.List;
 import static DAO.AppointmentDAO.generateReport;
 import static DAO.CustomerDAO.generateDivisionReport;
 
+/**
+ * The `Reports` class controls the reporting functionality of the application.
+ * It allows users to generate and view various reports.
+ */
 public class Reports {
     @FXML
     private TableView<AppointmentReportRow> reportTable;
@@ -37,6 +40,11 @@ public class Reports {
     private TableView<Appointment> appointmentsTable;
     @FXML
     private TableView<DivisionReportRow> divisionTable;
+    /**
+     * Initializes the Reports view and populates it with data.
+     *
+     * @throws SQLException If an SQL exception occurs.
+     */
     @FXML
     public void initialize() throws SQLException {
         populateContacts();
@@ -60,7 +68,11 @@ public class Reports {
         ObservableList<DivisionReportRow> divisionReportData = generateDivisionReport();
         divisionTable.getItems().addAll(divisionReportData);
     }
-
+    /**
+     * Populates the contact combo box with contact names.
+     *
+     * @throws SQLException If an SQL exception occurs.
+     */
     private void populateContacts() throws SQLException {
         ObservableList<Contact> contactsList;
         ObservableList<String> contactNamesList = FXCollections.observableArrayList();
@@ -68,6 +80,9 @@ public class Reports {
         contactsList.forEach(contact -> contactNamesList.add(contact.getContactName()));
         contactCombo.setItems(contactNamesList);
     }
+    /**
+     * Handles the selection of a contact in the combo box and filters appointments accordingly.
+     */
     @FXML
     private void handleContactSelection() {
         String selectedContact = contactCombo.getValue();
@@ -80,11 +95,20 @@ public class Reports {
             populateAppointments(appointments);
         }
     }
-    // Populate the TableView with a list of appointments
+    /**
+     * Populates the appointments table with a list of appointments.
+     *
+     * @param appointments The list of appointments to display.
+     */
     private void populateAppointments(List<Appointment> appointments) {
         appointmentsTable.getItems().clear();
         appointmentsTable.getItems().addAll(appointments);
     }
+    /**
+     * Handles the cancel button action to close the reports window.
+     *
+     * @param actionEvent The ActionEvent triggered by the user.
+     */
     public void CancelBtn(ActionEvent actionEvent) {
         Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
         stage.close();
