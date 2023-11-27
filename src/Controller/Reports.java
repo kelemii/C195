@@ -10,6 +10,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -18,10 +19,14 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import java.sql.SQLException;
 import java.util.List;
 
+import static DAO.AppointmentDAO.generateReport;
 import static DAO.CustomerDAO.generateDivisionReport;
 
 public class Reports {
-    public TableView<AppointmentReportRow> reportTable;
+    @FXML
+    private TableView<AppointmentReportRow> reportTable;
+    @FXML
+    private Button CancelBtn;
     @FXML
     private ComboBox<String> contactCombo;
     ContactDAO contactDAO =  new ContactDAO();
@@ -50,7 +55,7 @@ public class Reports {
         AppTotal.setCellValueFactory(new PropertyValueFactory<>("totalAppointments"));
         DivName.setCellValueFactory(new PropertyValueFactory<>("DivisionName"));
         TotalCust.setCellValueFactory(new PropertyValueFactory<>("TotalCustomers"));
-        ObservableList<AppointmentReportRow> appointmentReportData = appointmentDAO.generateReport();
+        ObservableList<AppointmentReportRow> appointmentReportData = generateReport();
         reportTable.getItems().addAll(appointmentReportData);
         ObservableList<DivisionReportRow> divisionReportData = generateDivisionReport();
         divisionTable.getItems().addAll(divisionReportData);

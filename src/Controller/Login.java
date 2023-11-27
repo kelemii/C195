@@ -16,10 +16,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.time.ZoneId;
+import java.util.Date;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -58,11 +62,11 @@ public class Login implements Initializable {
         String pwd = password.getText();
         currentUserID = loginForm.checkLogin(user, pwd);
 
-        currentUserName = connection.prepareStatement("SELECT User_name FROM users WHERE User_ID = " + currentUserID).toString();
-//        preparedStatement.setString(currentUserID);
-
         if (currentUserID > 0) {
-            //open main page
+            // Log successful login attempt
+            logLoginActivity(user, true);
+
+            // Open the main page
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("/View/Main.fxml"));
             Parent root = loader.load();
@@ -74,6 +78,9 @@ public class Login implements Initializable {
             AppointmentAlert appointmentAlert = new AppointmentAlert();
             appointmentAlert.checkUpcomingAppointments();
         } else {
+            // Log failed login attempt
+            logLoginActivity(user, false);
+
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Login Error");
             alert.setHeaderText("Invalid Credentials");
@@ -81,8 +88,21 @@ public class Login implements Initializable {
 
             alert.showAndWait();
         }
-
     }
+
+    private void logLoginActivity(String username, boolean success) {
+        String logFileName = "login_activity.txt";
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(logFileName, true))) {
+            String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+            String status = success ? "SUCCESS" : "FAILURE";
+            String logEntry = String.format("%s - Username: %s, Status: %s%n", timestamp, username, status);
+            writer.write(logEntry);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public void exitBtn(ActionEvent actionEvent) {
         Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();

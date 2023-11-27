@@ -240,7 +240,7 @@ public class AppointmentDAO {
         }
         return appointments;
     }
-    public ObservableList<AppointmentReportRow> generateReport() throws SQLException {
+    public static ObservableList<AppointmentReportRow> generateReport() throws SQLException {
         ObservableList<AppointmentReportRow> reportDataList = FXCollections.observableArrayList();
 
         String sql = "SELECT DATE_FORMAT(Start, '%M') AS AppointmentMonth, Type, COUNT(*) AS TotalAppointments " +
