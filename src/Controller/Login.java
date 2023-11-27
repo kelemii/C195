@@ -27,12 +27,13 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import static Help.JDBC.connection;
-
+/**
+ * The `Login` class controls the user authentication process.
+ * It handles user login attempts and logs activity.
+ */
 public class Login implements Initializable {
     Stage stage;
     private static int currentUserID = 0;
-    public static String currentUserName;
     @FXML
     private TextField UserName, password;
     @FXML
@@ -42,7 +43,12 @@ public class Login implements Initializable {
     private UserDAO loginForm = new UserDAO();
     ResourceBundle resourceBundle = ResourceBundle.getBundle("lang/login", Locale.getDefault());
 
-
+    /**
+     * Initializes the Login controller.
+     *
+     * @param url            The location used to resolve relative paths.
+     * @param resourceBundle The resource bundle for localization.
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ZoneId systemTimeZone = ZoneId.systemDefault();
@@ -56,7 +62,13 @@ public class Login implements Initializable {
         ExitBtn.setText(resourceBundle.getString("Exit"));
         location.setText(resourceBundle.getString("Location"));
     }
-
+    /**
+     * Handles the login action when the login button is clicked.
+     *
+     * @param actionEvent The ActionEvent triggered by the user.
+     * @throws IOException  If an I/O error occurs.
+     * @throws SQLException If an SQL exception occurs.
+     */
     public void handleLogin(ActionEvent actionEvent) throws IOException, SQLException {
         String user = UserName.getText();
         String pwd = password.getText();
@@ -89,7 +101,12 @@ public class Login implements Initializable {
             alert.showAndWait();
         }
     }
-
+    /**
+     * Logs the login activity.
+     *
+     * @param username The username used for login.
+     * @param success  True if the login attempt was successful, otherwise false.
+     */
     private void logLoginActivity(String username, boolean success) {
         String logFileName = "login_activity.txt";
 
@@ -102,8 +119,11 @@ public class Login implements Initializable {
             e.printStackTrace();
         }
     }
-
-
+    /**
+     * Handles the exit action when the exit button is clicked.
+     *
+     * @param actionEvent The ActionEvent triggered by the user.
+     */
     public void exitBtn(ActionEvent actionEvent) {
         Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
         stage.close();
