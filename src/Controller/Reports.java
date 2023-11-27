@@ -10,11 +10,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -25,8 +27,6 @@ import static DAO.CustomerDAO.generateDivisionReport;
 public class Reports {
     @FXML
     private TableView<AppointmentReportRow> reportTable;
-    @FXML
-    private Button CancelBtn;
     @FXML
     private ComboBox<String> contactCombo;
     ContactDAO contactDAO =  new ContactDAO();
@@ -84,5 +84,9 @@ public class Reports {
     private void populateAppointments(List<Appointment> appointments) {
         appointmentsTable.getItems().clear();
         appointmentsTable.getItems().addAll(appointments);
+    }
+    public void CancelBtn(ActionEvent actionEvent) {
+        Stage stage = (Stage) ((Node)actionEvent.getSource()).getScene().getWindow();
+        stage.close();
     }
 }

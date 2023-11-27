@@ -82,9 +82,9 @@ public class Login implements Initializable {
             logLoginActivity(user, false);
 
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Login Error");
-            alert.setHeaderText("Invalid Credentials");
-            alert.setContentText("The username or password you entered is incorrect.");
+            alert.setTitle(resourceBundle.getString("Login_Error"));
+            alert.setHeaderText(resourceBundle.getString("Invalid_Credentials"));
+            alert.setContentText(resourceBundle.getString("Incorrect_Username_Password"));
 
             alert.showAndWait();
         }

@@ -38,7 +38,7 @@
                 <Font size="18.0" />
             </font>
         </Label>
-        <Button fx:id="CancelBtn" layoutX="721.0" layoutY="552.0" mnemonicParsing="false" text="Back">
+        <Button layoutX="721.0" layoutY="552.0" mnemonicParsing="false" onAction="#CancelBtn" text="Back">
         </Button>
         <Label layoutX="501.0" layoutY="40.0" text="Select a contact" />
         <ComboBox fx:id="contactCombo" layoutX="614.0" layoutY="35.0" onAction="#handleContactSelection" prefWidth="150.0" />
