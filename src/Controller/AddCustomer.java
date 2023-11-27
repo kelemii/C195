@@ -25,6 +25,10 @@ import java.util.stream.Collectors;
 
 import static Help.JDBC.connection;
 
+/**
+ * The `AddCustomer` class controls the UI for adding new customers.
+ * It allows users to input customer details and save them to the database.
+ */
 public class AddCustomer {
     FirstLevelDivisionDAO firstLevelDivisionDAO;
     CustomerDAO customerDao;
@@ -36,11 +40,22 @@ public class AddCustomer {
     private ComboBox<String> CustomerCountry;
     @FXML
     private ComboBox<String>  CustomerState;
+    /**
+     * Initializes the AddCustomer controller.
+     *
+     * @throws SQLException If an SQL exception occurs while populating data.
+     */
     @FXML
     public void initialize() throws SQLException {
         populateCountryComboBoxes();
         identifyNextID();
     }
+    /**
+     * Handles the action to add a new customer.
+     *
+     * @param actionEvent The ActionEvent triggered by the user.
+     * @throws SQLException If an SQL exception occurs while adding the customer.
+     */
     public void handleCustomerAdd(ActionEvent actionEvent) throws SQLException {
         if(validateForm()) {
             int id = Integer.parseInt(CustomerID.getText());
@@ -56,6 +71,9 @@ public class AddCustomer {
             stage.close();
         }
     }
+    /**
+     * Identifies the next available customer ID.
+     */
     private void identifyNextID() {
         String sql = "SELECT AUTO_INCREMENT " +
                 "FROM information_schema.TABLES " +
@@ -73,7 +91,9 @@ public class AddCustomer {
             // Handle exception
         }
     }
-
+    /**
+     * Populates the country selection ComboBox.
+     */
     public void populateCountryComboBoxes() {
         ObservableList<String> countries = FXCollections.observableArrayList();
         countries.add("US"); // 1
@@ -81,12 +101,12 @@ public class AddCustomer {
         countries.add("Canada"); //3
         CustomerCountry.setItems(countries);
     }
-    public int countrySelectedtoId(String country) {
-        if (country.equals("US")) return 1;
-        if (country.equals("UK")) return 2;
-        if (country.equals("Canada")) return 3;
-        return 0;
-    }
+
+    /**
+     * Populates the state selection ComboBox based on the selected country.
+     *
+     * @throws SQLException If an SQL exception occurs while retrieving state data.
+     */
     public void populateStateComboBoxes() throws SQLException {
         System.out.println("populating states");
         ObservableList<FirstLevelDivision> states1 = FXCollections.observableArrayList();
@@ -109,8 +129,11 @@ public class AddCustomer {
         // Set the items in the CustomerState ComboBox
         CustomerState.setItems(stateNames);
     }
-
-
+    /**
+     * Handles the action to cancel adding a new customer.
+     *
+     * @param actionEvent The ActionEvent triggered by the user.
+     */
     public void handleCustomerCancel(ActionEvent actionEvent) {
         ResourceBundle resourceBundle = ResourceBundle.getBundle("lang/CancelConfirmation", Locale.getDefault());
 
@@ -125,6 +148,11 @@ public class AddCustomer {
             stage.close();
         }
     }
+    /**
+     * Validates the customer form data.
+     *
+     * @return True if the form data is valid, otherwise false.
+     */
     private boolean validateForm() {
         if (CustomerName.getText().isEmpty() ||
                 CustomerAdd.getText().isEmpty() ||
