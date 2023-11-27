@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 public class AppointmentAlert {
     AppointmentDAO appointmentDAO = new AppointmentDAO();
@@ -37,10 +39,11 @@ public class AppointmentAlert {
         if (!upcomingAppointments.isEmpty()) {
             // Display an alert with appointment details
             for (Appointment appointment : upcomingAppointments) {
-                String message = "Upcoming Appointment Alert:\n"
-                        + "Appointment ID: " + appointment.getAppointmentId() + "\n"
-                        + "Date: " + appointment.getStart().toLocalDate() + "\n"
-                        + "Time: " + appointment.getStart().toLocalTime() + " - " + appointment.getEnd().toLocalTime();
+                ResourceBundle resourceBundle = ResourceBundle.getBundle("lang/AppointmentAlert", Locale.getDefault());
+                String message = resourceBundle.getString("Upcoming_Appointment_Alert") + ":\n"
+                        + resourceBundle.getString("Appointment_ID") + ": " + appointment.getAppointmentId() + "\n"
+                        + resourceBundle.getString("Date") + ": " + appointment.getStart().toLocalDate() + "\n"
+                        + resourceBundle.getString("Time") + ": " + appointment.getStart().toLocalTime() + " - " + appointment.getEnd().toLocalTime();
                 displayAlert(message);
             }
         } else {
@@ -51,11 +54,9 @@ public class AppointmentAlert {
     }
 
     private void displayAlert(String message) {
-        // Implement code to display an alert dialog with the given message
-        // This can be done using JavaFX's Alert class or a custom dialog.
-        // Here's an example using JavaFX's Alert:
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Appointment Alert");
+        ResourceBundle resourceBundle = ResourceBundle.getBundle("lang/AppointmentAlert", Locale.getDefault());
+        alert.setTitle(resourceBundle.getString("Appointment_Alert_Title"));
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();

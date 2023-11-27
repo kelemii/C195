@@ -19,7 +19,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.ResourceBundle;
 
 
 import static Help.JDBC.connection;
@@ -201,16 +203,20 @@ public class AddAppointment {
     }
 
     public void AddAppCancel(ActionEvent actionEvent) {
+        ResourceBundle resourceBundle = ResourceBundle.getBundle("lang/cancelConfirmation", Locale.getDefault());
+
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Cancel Confirmation");
-        alert.setHeaderText("Are you sure you want to cancel?");
-        alert.setContentText("All unsaved changes will be lost.");
+        alert.setTitle(resourceBundle.getString("Cancel_Confirmation_Title"));
+        alert.setHeaderText(resourceBundle.getString("Cancel_Confirmation_Header"));
+        alert.setContentText(resourceBundle.getString("Cancel_Confirmation_Content"));
+
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             Stage stage = (Stage) AddAppCancelBtn.getScene().getWindow();
             stage.close();
         }
     }
+
     private boolean validateForm() {
         if (AppointmentTitle.getText().isEmpty() ||
                 AppointmentDesc.getText().isEmpty() ||
@@ -224,10 +230,12 @@ public class AddAppointment {
                 AppointmentCustomer.getValue() == null ||
                 AppointmentUser.getValue() == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Form Validation Error");
-            alert.setHeaderText("Required fields are empty");
-            alert.setContentText("Please fill in all required fields.");
+            ResourceBundle resourceBundle = ResourceBundle.getBundle("lang/AddAppointment", Locale.getDefault());
+            alert.setTitle(resourceBundle.getString("Form_Validation_Error_Title"));
+            alert.setHeaderText(resourceBundle.getString("Form_Validation_Error_Header"));
+            alert.setContentText(resourceBundle.getString("Form_Validation_Error_Content"));
             alert.showAndWait();
+
             return false; // At least one required field is empty
         }
         LocalDate startDate = AppointmentStartD.getValue();
@@ -239,9 +247,10 @@ public class AddAppointment {
         LocalDateTime endDateTime = LocalDateTime.of(endDate, endTime);
         if (startDateTime.isAfter(endDateTime)) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Form Validation Error");
-            alert.setHeaderText("Start must be before end");
-            alert.setContentText("Please fill in all required fields.");
+            ResourceBundle resourceBundle = ResourceBundle.getBundle("lang/AddAppointment", Locale.getDefault());
+            alert.setTitle(resourceBundle.getString("Form_Validation_Error_Title"));
+            alert.setHeaderText(resourceBundle.getString("Form_Validation_Error_Header"));
+            alert.setContentText(resourceBundle.getString("Form_Validation_Error_Content"));
             alert.showAndWait();
             return false; // Start date is after the end date
         }

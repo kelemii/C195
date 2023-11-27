@@ -18,7 +18,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import static Help.JDBC.connection;
@@ -110,10 +112,13 @@ public class AddCustomer {
 
 
     public void handleCustomerCancel(ActionEvent actionEvent) {
+        ResourceBundle resourceBundle = ResourceBundle.getBundle("lang/CancelConfirmation", Locale.getDefault());
+
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Cancel Confirmation");
-        alert.setHeaderText("Are you sure you want to cancel?");
-        alert.setContentText("All unsaved changes will be lost.");
+        alert.setTitle(resourceBundle.getString("Cancel_Confirmation_Title"));
+        alert.setHeaderText(resourceBundle.getString("Cancel_Confirmation_Header"));
+        alert.setContentText(resourceBundle.getString("Cancel_Confirmation_Content"));
+
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             Stage stage = (Stage) customerCancel.getScene().getWindow();
@@ -128,10 +133,12 @@ public class AddCustomer {
                 CustomerCountry.getValue() == null ||
                 CustomerState.getValue() == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Form Validation Error");
-            alert.setHeaderText("Validation Error");
-            alert.setContentText("Please ensure that all required fields are filled and a valid division is selected.");
+            ResourceBundle resourceBundle = ResourceBundle.getBundle("lang/AddCustomer", Locale.getDefault());
+            alert.setTitle(resourceBundle.getString("Form_Validation_Error_Title"));
+            alert.setHeaderText(resourceBundle.getString("Form_Validation_Error_Header"));
+            alert.setContentText(resourceBundle.getString("Form_Validation_Error_Content"));
             alert.showAndWait();
+
             return false; // At least one required field is empty
         }
 
