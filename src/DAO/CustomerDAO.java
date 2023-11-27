@@ -1,6 +1,8 @@
 package DAO;
 
+import Model.AppointmentReportRow;
 import Model.Customer;
+import Model.DivisionReportRow;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -148,6 +150,28 @@ public class CustomerDAO {
         countryIdToCodeMap.put(3, "Canada");
 
         return countryIdToCodeMap.get(countryId);
+    }
+
+    public static ObservableList<DivisionReportRow> generateDivisionReport() {
+        ObservableList<DivisionReportRow> reportDataList = FXCollections.observableArrayList();
+        String sql = "SELECT fld.Division AS DivisionName, COUNT(c.Customer_ID) AS TotalCustomers " +
+                "FROM first_level_divisions fld " +
+                "INNER JOIN customers c ON fld.Division_ID = c.Division_ID " +
+                "GROUP BY fld.Division_ID";
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                String divisionName = resultSet.getString("DivisionName");
+                int totalCustomers = resultSet.getInt("TotalCustomers");
+                DivisionReportRow divisionReportRow = new DivisionReportRow(divisionName, totalCustomers);
+                reportDataList.add(divisionReportRow);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return reportDataList;
     }
 }
 

@@ -1,6 +1,7 @@
 package DAO;
 
 import Model.Appointment;
+import Model.AppointmentReportRow;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -17,28 +18,28 @@ public class AppointmentDAO {
         String sql = "SELECT * FROM appointments";
 
         try {
-             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-             ResultSet resultSet = preparedStatement.executeQuery();
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
-                    while (resultSet.next()) {
-                        int appointmentId = resultSet.getInt("Appointment_ID");
-                        String title = resultSet.getString("Title");
-                        String description = resultSet.getString("Description");
-                        String location = resultSet.getString("Location");
-                        String type = resultSet.getString("Type");
-                        LocalDateTime start = resultSet.getTimestamp("Start").toLocalDateTime();
-                        LocalDateTime end = resultSet.getTimestamp("End").toLocalDateTime();
-                        LocalDateTime createDate = resultSet.getTimestamp("Create_Date").toLocalDateTime();
-                        String createdBy = resultSet.getString("Created_By");
-                        LocalDateTime lastUpdate = resultSet.getTimestamp("Last_Update").toLocalDateTime();
-                        String lastUpdatedBy = resultSet.getString("Last_Updated_By");
-                        int customerId = resultSet.getInt("Customer_ID");
-                        int userId = resultSet.getInt("User_ID");
-                        int contactId = resultSet.getInt("Contact_ID");
+            while (resultSet.next()) {
+                int appointmentId = resultSet.getInt("Appointment_ID");
+                String title = resultSet.getString("Title");
+                String description = resultSet.getString("Description");
+                String location = resultSet.getString("Location");
+                String type = resultSet.getString("Type");
+                LocalDateTime start = resultSet.getTimestamp("Start").toLocalDateTime();
+                LocalDateTime end = resultSet.getTimestamp("End").toLocalDateTime();
+                LocalDateTime createDate = resultSet.getTimestamp("Create_Date").toLocalDateTime();
+                String createdBy = resultSet.getString("Created_By");
+                LocalDateTime lastUpdate = resultSet.getTimestamp("Last_Update").toLocalDateTime();
+                String lastUpdatedBy = resultSet.getString("Last_Updated_By");
+                int customerId = resultSet.getInt("Customer_ID");
+                int userId = resultSet.getInt("User_ID");
+                int contactId = resultSet.getInt("Contact_ID");
 
-                        Appointment appointment = new Appointment(appointmentId, title, description, location, type, start, end, createDate, createdBy, lastUpdate, lastUpdatedBy, customerId, userId, contactId);
-                        appointmentsList.add(appointment);
-                    }
+                Appointment appointment = new Appointment(appointmentId, title, description, location, type, start, end, createDate, createdBy, lastUpdate, lastUpdatedBy, customerId, userId, contactId);
+                appointmentsList.add(appointment);
+            }
 
         } catch (SQLException e) {
             // Properly handle exception
@@ -63,6 +64,7 @@ public class AppointmentDAO {
             return preparedStatement.executeUpdate();
         }
     }
+
     public static void saveAppointment(Appointment appointment) throws SQLException {
         String insertSql = "INSERT INTO appointments (Title, Description, Location, Type, Start, End, Create_Date, Created_By, Last_Update, Last_Updated_By, Customer_ID, User_ID, Contact_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -99,6 +101,7 @@ public class AppointmentDAO {
             e.printStackTrace();
         }
     }
+
     public static void updateAppointment(Appointment appointment) throws SQLException {
         String sql = "UPDATE appointments " +
                 "SET Title = ?, Description = ?, Location = ?, Type = ?, Start = ?, End = ?, " +
@@ -134,6 +137,7 @@ public class AppointmentDAO {
             e.printStackTrace();
         }
     }
+
     public List<Appointment> getAppointmentsWithinTimeRange(
             LocalDateTime startTime, LocalDateTime endTime) throws SQLException {
 
@@ -173,7 +177,6 @@ public class AppointmentDAO {
             ResultSet resultSet = statement.executeQuery();
 
 
-
             // Process the query results and create Appointment objects
             while (resultSet.next()) {
                 int appointmentId = resultSet.getInt("appointment_id");
@@ -201,6 +204,66 @@ public class AppointmentDAO {
         }
 
         return appointments;
+    }
+
+    public List<Appointment> getAppointmentsForContact(String contactName) {
+        List<Appointment> appointments = new ArrayList<>();
+        try {
+            String sql = "SELECT a.* FROM appointments a JOIN contacts c ON a.contact_id = c.contact_id WHERE c.contact_name = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, contactName);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                int appointmentId = resultSet.getInt("appointment_id");
+                String title = resultSet.getString("title");
+                String description = resultSet.getString("description");
+                String location = resultSet.getString("location");
+                String type = resultSet.getString("type");
+                LocalDateTime start = resultSet.getTimestamp("start").toLocalDateTime();
+                LocalDateTime end = resultSet.getTimestamp("end").toLocalDateTime();
+                LocalDateTime createDate = resultSet.getTimestamp("create_date").toLocalDateTime();
+                String createdBy = resultSet.getString("created_by");
+                LocalDateTime lastUpdate = resultSet.getTimestamp("last_update").toLocalDateTime();
+                String lastUpdatedBy = resultSet.getString("last_updated_by");
+                int customerId = resultSet.getInt("customer_id");
+                int userId = resultSet.getInt("user_id");
+                int contactId = resultSet.getInt("contact_id");
+
+                // Create an Appointment object and add it to the list
+                Appointment appointment = new Appointment(appointmentId, title, description, location, type, start, end, createDate, createdBy, lastUpdate, lastUpdatedBy, customerId, userId, contactId);
+                appointments.add(appointment);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return appointments;
+    }
+    public ObservableList<AppointmentReportRow> generateReport() throws SQLException {
+        ObservableList<AppointmentReportRow> reportDataList = FXCollections.observableArrayList();
+
+        String sql = "SELECT DATE_FORMAT(Start, '%M') AS AppointmentMonth, Type, COUNT(*) AS TotalAppointments " +
+                "FROM appointments " +
+                "GROUP BY Type, DATE_FORMAT(Start, '%M')";
+
+        try {
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                String appointmentMonth = resultSet.getString("AppointmentMonth");
+                String appointmentType = resultSet.getString("Type");
+                int totalAppointments = resultSet.getInt("TotalAppointments");
+
+                AppointmentReportRow appointmentReportRow = new AppointmentReportRow(appointmentMonth, appointmentType, totalAppointments);
+                reportDataList.add(appointmentReportRow);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return reportDataList;
     }
 
 }

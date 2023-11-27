@@ -49,7 +49,7 @@ import static Help.JDBC.connection;
 //•  entering an incorrect username and password
  // these are all handled pretty much, its not possible to schedule outside of the business hours so i dont have an alert created
 //e.  Write code to provide an alert when there is an appointment within 15 minutes of the user’s log-in. A custom message should be displayed in the user interface and include the appointment ID, date, and time. If the user does not have any appointments within 15 minutes of logging in, display a custom message in the user interface indicating there are no upcoming appointments.
-//Note: Since evaluation may be testing your application outside of business hours, your alerts must be robust enough to trigger an appointment within 15 minutes of the local time set on the user’s computer, which may or may not be ET.
+//Note: Since evaluation may be testing your application outside of business hours, your alerts must be robust enough to trigger an appointment within 15 minutes of the local time set on the user’s computer, which may or may not be ET. DONE
 
 //f.  Write code that generates accurate information in each of the following reports and will display the reports in the user interface:
 //Note: You do not need to save and print the reports to a file or provide a screenshot.
@@ -221,7 +221,18 @@ public class Main implements Initializable {
         }
     }
 
-    public void handleReports(ActionEvent actionEvent) {
+    public void handleReports(ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("/View/Reports.fxml"));
+        Parent root = loader.load();
+
+        // Create a new stage for the popup
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL); // Set the window to be modal
+        stage.setTitle("Reports");
+        stage.setScene(new Scene(root));
+        stage.showAndWait();
+//        initializeAppointments();
     }
 
     public void handleLogout(ActionEvent actionEvent) throws IOException {
