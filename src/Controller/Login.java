@@ -2,6 +2,7 @@ package Controller;
 
 
 import DAO.UserDAO;
+import Help.AppointmentAlert;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -70,7 +71,8 @@ public class Login implements Initializable {
             stage.setScene(scene);
             stage.setTitle("Main");
             stage.show();
-
+            AppointmentAlert appointmentAlert = new AppointmentAlert();
+            appointmentAlert.checkUpcomingAppointments();
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Login Error");

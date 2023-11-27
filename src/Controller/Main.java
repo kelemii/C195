@@ -38,16 +38,16 @@ import static Help.JDBC.connection;
 /// next steps are to create reports, and validate that a user does not have any appointments when before deleting, if they have appointments they have to be deleted FIRST, then customer can be deleted.
 //•  When a customer record is deleted, a custom message should display in the user interface. DONE
 //•  A custom message is displayed in the user interface with the Appointment_ID and type of appointment canceled. DONE
-//•  All of the original appointment information is displayed on the update form in local time zone.
+//•  All of the original appointment information is displayed on the update form in local time zone. DONE
 
 // c.  Write code that enables the user to adjust appointment times. While the appointment times should be stored in Coordinated Universal Time (UTC), they should be automatically and consistently updated according to the local time zone set on the user’s computer wherever appointments are displayed in the application.
 // Note: There are up to three time zones in effect. Coordinated Universal Time (UTC) is used for storing the time in the database, the user’s local time is used for display purposes, and Eastern Time (ET) is used for the company’s office hours. Local time will be checked against ET business hours before they are stored in the database as UTC.
-
+// done
 //d.  Write code to implement input validation and logical error checks to prevent each of the following changes when adding or updating information; display a custom message specific for each error check in the user interface:
 //•  scheduling an appointment outside of business hours defined as 8:00 a.m. to 10:00 p.m. ET, including weekends
 //•  scheduling overlapping appointments for customers
 //•  entering an incorrect username and password
-
+ // these are all handled pretty much, its not possible to schedule outside of the business hours so i dont have an alert created
 //e.  Write code to provide an alert when there is an appointment within 15 minutes of the user’s log-in. A custom message should be displayed in the user interface and include the appointment ID, date, and time. If the user does not have any appointments within 15 minutes of logging in, display a custom message in the user interface indicating there are no upcoming appointments.
 //Note: Since evaluation may be testing your application outside of business hours, your alerts must be robust enough to trigger an appointment within 15 minutes of the local time set on the user’s computer, which may or may not be ET.
 

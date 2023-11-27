@@ -103,12 +103,19 @@ public class AddAppointment {
 
     public void populateTimeComboBoxes() {
         ObservableList<String> appointmentTimes = FXCollections.observableArrayList();
-        LocalTime firstAppointment = LocalTime.MIN.plusHours(8);
-        LocalTime lastAppointment = LocalTime.MAX.minusHours(1).minusMinutes(45);
+        ZoneId easternZone = ZoneId.of("US/Eastern");  // Set the timezone to Eastern Time (ET)
+        ZoneId localZone = ZoneId.systemDefault();  // Get the local timezone of the system
+
+        LocalTime firstAppointment = LocalTime.of(8, 0);  // Set the business hours in ET (0800)
+        LocalTime lastAppointment = LocalTime.of(22, 0);  // Set the business hours in ET (2200)
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
         while (firstAppointment.isBefore(lastAppointment)) {
-            String timeStr = firstAppointment.format(timeFormatter);
+            ZonedDateTime etTime = LocalDateTime.of(LocalDate.now(), firstAppointment)
+                    .atZone(easternZone);
+            ZonedDateTime localTime = etTime.withZoneSameInstant(localZone);
+
+            String timeStr = localTime.toLocalTime().format(timeFormatter);
             appointmentTimes.add(timeStr);
             firstAppointment = firstAppointment.plusMinutes(15);
         }
@@ -116,6 +123,7 @@ public class AddAppointment {
         AppointmentStartT.setItems(appointmentTimes);
         AppointmentEndT.setItems(appointmentTimes);
     }
+
 
 
 

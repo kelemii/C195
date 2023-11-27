@@ -5,7 +5,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.sql.*;
-import java.time.LocalDateTime;
+import java.time.*;
+import java.util.ArrayList;
+import java.util.List;
+
 import static Help.JDBC.connection;
 
 public class AppointmentDAO {
@@ -131,4 +134,73 @@ public class AppointmentDAO {
             e.printStackTrace();
         }
     }
+    public List<Appointment> getAppointmentsWithinTimeRange(
+            LocalDateTime startTime, LocalDateTime endTime) throws SQLException {
+
+        List<Appointment> appointments = new ArrayList<>();
+
+        try {
+// Get the current date in the local timezone
+            LocalDate currentDate = LocalDate.now();
+
+// Combine currentDate with the time parts of startTime and endTime
+            LocalTime startTimeLocal = startTime.toLocalTime();
+            LocalTime endTimeLocal = endTime.toLocalTime();
+            LocalDateTime startDateTime = LocalDateTime.of(currentDate, startTimeLocal);
+            LocalDateTime endDateTime = LocalDateTime.of(currentDate, endTimeLocal);
+
+// Convert the LocalDateTime values to UTC
+            ZoneId localZone = ZoneId.systemDefault();
+            ZoneId utcZone = ZoneId.of("UTC");
+            ZonedDateTime startLocal = startDateTime.atZone(localZone);
+            ZonedDateTime endLocal = endDateTime.atZone(localZone);
+            ZonedDateTime startUTC = startLocal.withZoneSameInstant(utcZone);
+            ZonedDateTime endUTC = endLocal.withZoneSameInstant(utcZone);
+
+// Convert the ZonedDateTime values to Timestamp objects
+            Timestamp startTimestamp = Timestamp.from(startUTC.toInstant());
+            Timestamp endTimestamp = Timestamp.from(endUTC.toInstant());
+
+// Modify your SQL query to use these Timestamps
+            String sql = "SELECT * FROM appointments WHERE start >= ? AND start <= ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            System.out.println(startTimestamp);
+            System.out.println(endTimestamp);
+            statement.setTimestamp(1, startTimestamp);
+            statement.setTimestamp(2, endTimestamp);
+
+// Execute the query
+            ResultSet resultSet = statement.executeQuery();
+
+
+
+            // Process the query results and create Appointment objects
+            while (resultSet.next()) {
+                int appointmentId = resultSet.getInt("appointment_id");
+                String title = resultSet.getString("title");
+                String description = resultSet.getString("description");
+                String location = resultSet.getString("location");
+                String type = resultSet.getString("type");
+                LocalDateTime start = resultSet.getTimestamp("start").toLocalDateTime();
+                LocalDateTime end = resultSet.getTimestamp("end").toLocalDateTime();
+                LocalDateTime createDate = resultSet.getTimestamp("create_date").toLocalDateTime();
+                String createdBy = resultSet.getString("created_by");
+                LocalDateTime lastUpdate = resultSet.getTimestamp("last_update").toLocalDateTime();
+                String lastUpdatedBy = resultSet.getString("last_updated_by");
+                int customerId = resultSet.getInt("customer_id");
+                int userId = resultSet.getInt("user_id");
+                int contactId = resultSet.getInt("contact_id");
+
+                // Create an Appointment object and add it to the list
+                Appointment appointment = new Appointment(appointmentId, title, description, location, type, start, end, createDate, createdBy, lastUpdate, lastUpdatedBy, customerId, userId, contactId);
+                appointments.add(appointment);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Handle any exceptions here
+        }
+
+        return appointments;
+    }
+
 }
