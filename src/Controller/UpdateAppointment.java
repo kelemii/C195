@@ -25,7 +25,9 @@ import java.util.ResourceBundle;
 
 
 import static Help.JDBC.connection;
-
+/**
+ * The `UpdateAppointment` class controls the updating of appointment records.
+ */
 public class UpdateAppointment {
     @FXML
     private TextField AppointmentID;
@@ -50,6 +52,11 @@ public class UpdateAppointment {
     private AppointmentDAO appointmentDAO;
     private UserDAO userDAO = new UserDAO();
     private ContactDAO contactDAO;
+    /**
+     * Initializes the `UpdateAppointment` view.
+     *
+     * @throws SQLException If an SQL exception occurs.
+     */
     @FXML
     public void initialize() throws SQLException {
         populateContacts();
@@ -57,6 +64,12 @@ public class UpdateAppointment {
         populateCustomers();
         populateUserList();
     }
+    /**
+     * Initializes the `UpdateAppointment` view with data from a selected appointment.
+     *
+     * @param selectedAppointment The appointment to edit.
+     * @throws SQLException If an SQL exception occurs.
+     */
     public void initData(Appointment selectedAppointment) throws SQLException {
         AppointmentID.setText(String.valueOf(selectedAppointment.getAppointmentId()));
         AppointmentTitle.setText(selectedAppointment.getTitle());
@@ -71,7 +84,11 @@ public class UpdateAppointment {
         AppointmentUser.setValue(selectedAppointment.getUserId()); // Assuming you have a method to get user name
         AppointmentContact.setValue(getContactName(selectedAppointment.getContactId()));
     }
-
+    /**
+     * Populates the contact names in the AppointmentContact ComboBox.
+     *
+     * @throws SQLException If an SQL exception occurs.
+     */
     private void populateContacts() throws SQLException {
         ObservableList<Contact> contactsList;
         ObservableList<String> contactNamesList = FXCollections.observableArrayList();
@@ -79,6 +96,11 @@ public class UpdateAppointment {
         contactsList.forEach(contact -> contactNamesList.add(contact.getContactName()));
         AppointmentContact.setItems(contactNamesList);
     }
+    /**
+     * Populates the customer names in the AppointmentCustomer ComboBox.
+     *
+     * @throws SQLException If an SQL exception occurs.
+     */
     private void populateCustomers() throws SQLException {
         ObservableList<Customer> customerList;
         ObservableList<String> customerNamesList = FXCollections.observableArrayList();
@@ -86,13 +108,20 @@ public class UpdateAppointment {
         customerList.forEach(customer -> customerNamesList.add(customer.getCustomerName()));
         AppointmentCustomer.setItems(customerNamesList);
     }
+    /**
+     * Populates the user IDs in the AppointmentUser ComboBox.
+     *
+     * @throws SQLException If an SQL exception occurs.
+     */
 
     public void populateUserList() throws SQLException {
         ObservableList<Integer> usersList = FXCollections.observableArrayList();
         usersList = userDAO.getUserIDs();
         AppointmentUser.setItems(userDAO.getUserIDs());
     }
-
+    /**
+     * Populates the time ComboBoxes (AppointmentStartT and AppointmentEndT) with time slots.
+     */
     public void populateTimeComboBoxes() {
         ObservableList<String> appointmentTimes = FXCollections.observableArrayList();
         LocalTime firstAppointment = LocalTime.MIN.plusHours(8);
@@ -108,8 +137,12 @@ public class UpdateAppointment {
         AppointmentStartT.setItems(appointmentTimes);
         AppointmentEndT.setItems(appointmentTimes);
     }
-
-
+    /**
+     * Handles the action when the "Save" button is clicked to update an appointment.
+     *
+     * @param actionEvent The ActionEvent triggered by the button click.
+     * @throws SQLException If an SQL exception occurs.
+     */
     public void UpdateAppSave(ActionEvent actionEvent) throws SQLException {
         if (validateForm()) {
             int id = Integer.parseInt(AppointmentID.getText());
@@ -141,6 +174,13 @@ public class UpdateAppointment {
             stage.close();
         }
     }
+    /**
+     * Retrieves the contact ID for a given contact name.
+     *
+     * @param contactName The name of the contact.
+     * @return The contact ID, or -1 if not found.
+     * @throws SQLException If an SQL exception occurs.
+     */
     public int getContactId(String contactName) throws SQLException {
         String sql = "SELECT CONTACT_ID FROM client_schedule.contacts WHERE Contact_Name = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -160,6 +200,13 @@ public class UpdateAppointment {
         }
         return preparedStatement.executeQuery().getInt("CONTACT_ID");
     }
+    /**
+     * Retrieves the contact name for a given contact ID.
+     *
+     * @param contactID The ID of the contact.
+     * @return The contact name, or null if not found.
+     * @throws SQLException If an SQL exception occurs.
+     */
     public String getContactName(int contactID) throws SQLException {
         String sql = "SELECT CONTACT_Name FROM client_schedule.contacts WHERE Contact_ID = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -177,6 +224,13 @@ public class UpdateAppointment {
         }
         return preparedStatement.executeQuery().getString("CONTACT_Name");
     }
+    /**
+     * Retrieves the customer ID for a given customer name.
+     *
+     * @param customerName The name of the customer.
+     * @return The customer ID, or -1 if not found.
+     * @throws SQLException If an SQL exception occurs.
+     */
     public int getCustomerId(String customerName) throws SQLException {
         String sql = "SELECT CUSTOMER_ID FROM client_schedule.customers WHERE Customer_Name = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -196,6 +250,13 @@ public class UpdateAppointment {
         }
         return preparedStatement.executeQuery().getInt("CUSTOMER_ID");
     }
+    /**
+     * Retrieves the customer name for a given customer ID.
+     *
+     * @param customerID The ID of the customer.
+     * @return The customer name, or null if not found.
+     * @throws SQLException If an SQL exception occurs.
+     */
     public String getCustomerName(int customerID) throws SQLException {
         String sql = "SELECT Customer_Name FROM client_schedule.customers WHERE CUSTOMER_ID = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -213,6 +274,9 @@ public class UpdateAppointment {
         }
         return preparedStatement.executeQuery().getString("CUSTOMER_Name");
     }
+    /**
+     * Handles the action when the "Cancel" button is clicked to close the update window.
+     */
 
     public void UpdateAppCancel(ActionEvent actionEvent) {
         ResourceBundle resourceBundle = ResourceBundle.getBundle("lang/cancelConfirmation", Locale.getDefault());
@@ -226,6 +290,12 @@ public class UpdateAppointment {
             stage.close();
         }
     }
+
+    /**
+     * Validates the appointment update form.
+     *
+     * @return True if the form is valid; otherwise, false.
+     */
     private boolean validateForm() {
         if (AppointmentTitle.getText().isEmpty() ||
                 AppointmentDesc.getText().isEmpty() ||
