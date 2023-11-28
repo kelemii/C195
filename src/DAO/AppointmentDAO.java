@@ -12,7 +12,15 @@ import java.util.List;
 
 import static Help.JDBC.connection;
 
+/**
+ * Data access object for appointments
+ */
 public class AppointmentDAO {
+    /**
+     * retrieves all appointments from DB
+     * @return
+     * @throws SQLException
+     */
     public static ObservableList<Appointment> getAllAppointments() throws SQLException {
         ObservableList<Appointment> appointmentsList = FXCollections.observableArrayList();
         String sql = "SELECT * FROM appointments";
@@ -65,6 +73,11 @@ public class AppointmentDAO {
         }
     }
 
+    /**
+     * saves a new appointment to the DB
+     * @param appointment
+     * @throws SQLException
+     */
     public static void saveAppointment(Appointment appointment) throws SQLException {
         String insertSql = "INSERT INTO appointments (Title, Description, Location, Type, Start, End, Create_Date, Created_By, Last_Update, Last_Updated_By, Customer_ID, User_ID, Contact_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -102,6 +115,11 @@ public class AppointmentDAO {
         }
     }
 
+    /**
+     * updates an existing appointment in the DB
+     * @param appointment
+     * @throws SQLException
+     */
     public static void updateAppointment(Appointment appointment) throws SQLException {
         String sql = "UPDATE appointments " +
                 "SET Title = ?, Description = ?, Location = ?, Type = ?, Start = ?, End = ?, " +
@@ -138,46 +156,40 @@ public class AppointmentDAO {
         }
     }
 
+    /**
+     * returns a list of appointments within a time frame
+     * @param startTime
+     * @param endTime
+     * @return
+     * @throws SQLException
+     */
     public List<Appointment> getAppointmentsWithinTimeRange(
             LocalDateTime startTime, LocalDateTime endTime) throws SQLException {
 
         List<Appointment> appointments = new ArrayList<>();
 
         try {
-// Get the current date in the local timezone
             LocalDate currentDate = LocalDate.now();
-
-// Combine currentDate with the time parts of startTime and endTime
             LocalTime startTimeLocal = startTime.toLocalTime();
             LocalTime endTimeLocal = endTime.toLocalTime();
             LocalDateTime startDateTime = LocalDateTime.of(currentDate, startTimeLocal);
             LocalDateTime endDateTime = LocalDateTime.of(currentDate, endTimeLocal);
-
-// Convert the LocalDateTime values to UTC
             ZoneId localZone = ZoneId.systemDefault();
             ZoneId utcZone = ZoneId.of("UTC");
             ZonedDateTime startLocal = startDateTime.atZone(localZone);
             ZonedDateTime endLocal = endDateTime.atZone(localZone);
             ZonedDateTime startUTC = startLocal.withZoneSameInstant(utcZone);
             ZonedDateTime endUTC = endLocal.withZoneSameInstant(utcZone);
-
-// Convert the ZonedDateTime values to Timestamp objects
             Timestamp startTimestamp = Timestamp.from(startUTC.toInstant());
             Timestamp endTimestamp = Timestamp.from(endUTC.toInstant());
-
-// Modify your SQL query to use these Timestamps
             String sql = "SELECT * FROM appointments WHERE start >= ? AND start <= ?";
             PreparedStatement statement = connection.prepareStatement(sql);
             System.out.println(startTimestamp);
             System.out.println(endTimestamp);
             statement.setTimestamp(1, startTimestamp);
             statement.setTimestamp(2, endTimestamp);
-
-// Execute the query
             ResultSet resultSet = statement.executeQuery();
 
-
-            // Process the query results and create Appointment objects
             while (resultSet.next()) {
                 int appointmentId = resultSet.getInt("appointment_id");
                 String title = resultSet.getString("title");
@@ -193,26 +205,27 @@ public class AppointmentDAO {
                 int customerId = resultSet.getInt("customer_id");
                 int userId = resultSet.getInt("user_id");
                 int contactId = resultSet.getInt("contact_id");
-
-                // Create an Appointment object and add it to the list
                 Appointment appointment = new Appointment(appointmentId, title, description, location, type, start, end, createDate, createdBy, lastUpdate, lastUpdatedBy, customerId, userId, contactId);
                 appointments.add(appointment);
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            // Handle any exceptions here
         }
 
         return appointments;
     }
 
+    /**
+     * gets appointment for specific contact
+     * @param contactName
+     * @return
+     */
     public List<Appointment> getAppointmentsForContact(String contactName) {
         List<Appointment> appointments = new ArrayList<>();
         try {
             String sql = "SELECT a.* FROM appointments a JOIN contacts c ON a.contact_id = c.contact_id WHERE c.contact_name = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, contactName);
-
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
@@ -230,8 +243,6 @@ public class AppointmentDAO {
                 int customerId = resultSet.getInt("customer_id");
                 int userId = resultSet.getInt("user_id");
                 int contactId = resultSet.getInt("contact_id");
-
-                // Create an Appointment object and add it to the list
                 Appointment appointment = new Appointment(appointmentId, title, description, location, type, start, end, createDate, createdBy, lastUpdate, lastUpdatedBy, customerId, userId, contactId);
                 appointments.add(appointment);
             }
@@ -240,6 +251,12 @@ public class AppointmentDAO {
         }
         return appointments;
     }
+
+    /**
+     * generates data for my appointment report tableview
+     * @return
+     * @throws SQLException
+     */
     public static ObservableList<AppointmentReportRow> generateReport() throws SQLException {
         ObservableList<AppointmentReportRow> reportDataList = FXCollections.observableArrayList();
 
