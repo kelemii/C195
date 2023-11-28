@@ -19,7 +19,9 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
-
+/**
+ * Controller class for updating customer information.
+ */
 public class UpdateCustomer {
     FirstLevelDivisionDAO firstLevelDivisionDAO;
     CustomerDAO customerDAO;
@@ -29,7 +31,12 @@ public class UpdateCustomer {
     private TextField CustomerID, CustomerName, CustomerAdd, CustomerZip, CustomerPhone;
     @FXML
     private ComboBox<String> CustomerCountry, CustomerState;
-
+    /**
+     * Handles the action when the "Update" button is clicked to update customer information.
+     *
+     * @param actionEvent The ActionEvent triggered by the button click.
+     * @throws SQLException If an SQL exception occurs.
+     */
     public void handleCustomerUpdate(ActionEvent actionEvent) throws SQLException {
         if(validateForm()) {
             int id = Integer.parseInt(CustomerID.getText());
@@ -45,6 +52,12 @@ public class UpdateCustomer {
             stage.close();
         }
     }
+    /**
+     * Initializes the form with data from the selected customer.
+     *
+     * @param selectedCustomer The selected customer object.
+     * @throws SQLException If an SQL exception occurs.
+     */
     public void initData(Customer selectedCustomer) throws SQLException {
         CustomerID.setText(String.valueOf(selectedCustomer.getCustomerId()));
         CustomerName.setText(selectedCustomer.getCustomerName());
@@ -54,6 +67,9 @@ public class UpdateCustomer {
         CustomerCountry.setValue(customerDAO.getCountryIdByDivisionName(selectedCustomer.getDivision())); //this needs a query to identify the country code and a conversion into the string
         CustomerState.setValue(selectedCustomer.getDivision());
     }
+    /**
+     * Handles the action when the "Cancel" button is clicked to close the update window.
+     */
 
     public void handleCustomerCancel(ActionEvent actionEvent) {
         ResourceBundle resourceBundle = ResourceBundle.getBundle("lang/cancelConfirmation", Locale.getDefault());
@@ -67,8 +83,12 @@ public class UpdateCustomer {
             stage.close();
         }
     }
+    /**
+     * Populates the state ComboBox based on the selected country.
+     *
+     * @throws SQLException If an SQL exception occurs.
+     */
     public void populateStateComboBoxes() throws SQLException {
-        System.out.println("populating states");
         ObservableList<FirstLevelDivision> states1 = FXCollections.observableArrayList();
 
         if (CustomerCountry.getValue() != null) {
@@ -89,6 +109,11 @@ public class UpdateCustomer {
         // Set the items in the CustomerState ComboBox
         CustomerState.setItems(stateNames);
     }
+    /**
+     * Validates the customer update form.
+     *
+     * @return True if the form is valid; otherwise, false.
+     */
     private boolean validateForm() {
         if (CustomerName.getText().isEmpty() ||
                 CustomerAdd.getText().isEmpty() ||
