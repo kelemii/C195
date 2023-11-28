@@ -305,27 +305,44 @@ public class Main implements Initializable {
         Customer selectedCustomer = customersTable.getSelectionModel().getSelectedItem();
         if (selectedCustomer != null) {
             int customerId = selectedCustomer.getCustomerId();
+
+            // Check if there are any appointments associated with the customer
             try {
-                int rowsAffected = CustomerDAO.deleteCustomer(customerId);
-                if (rowsAffected > 0) {
-                    customersTable.getItems().remove(selectedCustomer);
+                boolean hasAppointments = CustomerDAO.customerHasAppointments(customerId);
+                if (hasAppointments) {
+                    // Show an alert indicating that appointments must be deleted first
                     ResourceBundle resourceBundle = ResourceBundle.getBundle("lang/main", Locale.getDefault());
-                    String successMessage = resourceBundle.getString("Customer_Deleted_Message");
-                    String successTitle = resourceBundle.getString("Customer_Deleted_Title");
-                    String successHeader = resourceBundle.getString("Customer_Deleted_Header");
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle(successTitle);
-                    alert.setHeaderText(successHeader); // No header text
-                    alert.setContentText(selectedCustomer.getCustomerName() + " " + successMessage);
+                    String errorMessage = resourceBundle.getString("Customer_Delete_Appointments_Error");
+                    String errorTitle = resourceBundle.getString("Customer_Delete_Error_Title");
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle(errorTitle);
+                    alert.setHeaderText(null);
+                    alert.setContentText(errorMessage);
                     alert.showAndWait();
                 } else {
-                    System.err.println("Failed to delete customer from the database.");
+                    // No appointments are associated with the customer, proceed with deletion
+                    int rowsAffected = CustomerDAO.deleteCustomer(customerId);
+                    if (rowsAffected > 0) {
+                        customersTable.getItems().remove(selectedCustomer);
+                        ResourceBundle resourceBundle = ResourceBundle.getBundle("lang/main", Locale.getDefault());
+                        String successMessage = resourceBundle.getString("Customer_Deleted_Message");
+                        String successTitle = resourceBundle.getString("Customer_Deleted_Title");
+                        String successHeader = resourceBundle.getString("Customer_Deleted_Header");
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle(successTitle);
+                        alert.setHeaderText(successHeader);
+                        alert.setContentText(selectedCustomer.getCustomerName() + " " + successMessage);
+                        alert.showAndWait();
+                    } else {
+                        System.err.println("Failed to delete customer from the database.");
+                    }
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
     }
+
 
     /**
      * Handles filtering and displaying all appointments.

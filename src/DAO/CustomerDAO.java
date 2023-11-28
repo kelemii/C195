@@ -173,5 +173,24 @@ public class CustomerDAO {
         }
         return reportDataList;
     }
+
+    public static boolean customerHasAppointments(int customerId) {
+        String sql = "SELECT * FROM appointments WHERE Customer_ID = ?";
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, customerId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Handle exception
+        }
+
+        return false;
+    }
 }
 
