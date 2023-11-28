@@ -18,8 +18,8 @@ import static Help.JDBC.connection;
 public class AppointmentDAO {
     /**
      * retrieves all appointments from DB
-     * @return
-     * @throws SQLException
+     * @return returns all appointments
+     * @throws SQLException if sql error occurs
      */
     public static ObservableList<Appointment> getAllAppointments() throws SQLException {
         ObservableList<Appointment> appointmentsList = FXCollections.observableArrayList();
@@ -74,8 +74,8 @@ public class AppointmentDAO {
 
     /**
      * saves a new appointment to the DB
-     * @param appointment
-     * @throws SQLException
+     * @param appointment the appointment that gets saved
+     * @throws SQLException if an error occurs with sql
      */
     public static void saveAppointment(Appointment appointment) throws SQLException {
         String insertSql = "INSERT INTO appointments (Title, Description, Location, Type, Start, End, Create_Date, Created_By, Last_Update, Last_Updated_By, Customer_ID, User_ID, Contact_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -115,8 +115,8 @@ public class AppointmentDAO {
 
     /**
      * updates an existing appointment in the DB
-     * @param appointment
-     * @throws SQLException
+     * @param appointment app that is updated
+     * @throws SQLException if sql error occurs
      */
     public static void updateAppointment(Appointment appointment) throws SQLException {
         String sql = "UPDATE appointments " +
@@ -155,10 +155,10 @@ public class AppointmentDAO {
 
     /**
      * returns a list of appointments within a time frame
-     * @param startTime
-     * @param endTime
-     * @return
-     * @throws SQLException
+     * @param startTime app start
+     * @param endTime app end
+     * @return returns the appointemnts in that timeframe
+     * @throws SQLException if an error occurs with sql
      */
     public List<Appointment> getAppointmentsWithinTimeRange(
             LocalDateTime startTime, LocalDateTime endTime) throws SQLException {
@@ -214,8 +214,8 @@ public class AppointmentDAO {
 
     /**
      * gets appointment for specific contact
-     * @param contactName
-     * @return
+     * @param contactName name of contact
+     * @return returns that contacts appointments
      */
     public List<Appointment> getAppointmentsForContact(String contactName) {
         List<Appointment> appointments = new ArrayList<>();
@@ -251,8 +251,8 @@ public class AppointmentDAO {
 
     /**
      * generates data for my appointment report tableview
-     * @return
-     * @throws SQLException
+     * @return returns appointment data for reports
+     * @throws SQLException if an error occurs with sql
      */
     public static ObservableList<AppointmentReportRow> generateReport() throws SQLException {
         ObservableList<AppointmentReportRow> reportDataList = FXCollections.observableArrayList();
