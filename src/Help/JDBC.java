@@ -3,6 +3,9 @@ package Help;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
+/**
+ * The type Jdbc.
+ */
 public abstract class JDBC {
     private static final String protocol = "jdbc";
     private static final String vendor = ":mysql:";
@@ -12,8 +15,14 @@ public abstract class JDBC {
     private static final String driver = "com.mysql.cj.jdbc.Driver"; // Driver reference
     private static final String userName = "sqlUser"; // Username
     private static String password = "Passw0rd!"; // Password
+    /**
+     * The constant connection.
+     */
     public static Connection connection;  // Connection Interface
 
+    /**
+     * Open connection.
+     */
     public static void openConnection()
     {
         try {
@@ -27,11 +36,19 @@ public abstract class JDBC {
         }
     }
 
+    /**
+     * Gets connection.
+     *
+     * @return the connection
+     */
     public static Connection getConnection() {
 
         return connection;
     }
 
+    /**
+     * Close connection.
+     */
     public static void closeConnection() {
         try {
             connection.close();

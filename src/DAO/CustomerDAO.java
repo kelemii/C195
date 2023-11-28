@@ -15,7 +15,16 @@ import java.util.Map;
 
 import static Help.JDBC.connection;
 
+/**
+ * The type Customer dao.
+ */
 public class CustomerDAO {
+    /**
+     * Gets all customers.
+     *
+     * @return the all customers
+     * @throws SQLException the sql exception
+     */
     public static ObservableList<Customer> getAllCustomers() throws SQLException {
         ObservableList<Customer> customerList = FXCollections.observableArrayList();
         String sql = "SELECT customers.Customer_ID, customers.Customer_Name, customers.Address, customers.Postal_Code, customers.Phone, customers.Division_ID, first_level_divisions.Division from customers INNER JOIN  first_level_divisions ON customers.Division_ID = first_level_divisions.Division_ID";
@@ -62,6 +71,14 @@ public class CustomerDAO {
         }
         return 0;
     }
+
+    /**
+     * Save customer int.
+     *
+     * @param customer the customer
+     * @return the int
+     * @throws SQLException the sql exception
+     */
     public static int saveCustomer(Customer customer) throws SQLException {
         String  query = "INSERT INTO customers (Customer_Name, Address, Postal_Code, Phone, Division_ID) VALUES (?, ?, ?, ?, ?)";
 
@@ -94,6 +111,14 @@ public class CustomerDAO {
         }
         return 0;
     }
+
+    /**
+     * Update customer int.
+     *
+     * @param customer the customer
+     * @return the int
+     * @throws SQLException the sql exception
+     */
     public static int updateCustomer(Customer customer) throws SQLException {
         String query = "UPDATE customers SET Customer_Name = ?, Address = ?, Postal_Code = ?, Phone = ?, Division_ID = ? WHERE Customer_ID = ?";
 
@@ -128,6 +153,13 @@ public class CustomerDAO {
         return 0;
     }
 
+    /**
+     * Gets country id by division name.
+     *
+     * @param division the division
+     * @return the country id by division name
+     * @throws SQLException the sql exception
+     */
     public static String getCountryIdByDivisionName(String division) throws SQLException {
         String sql = "SELECT Country_ID FROM first_level_divisions WHERE Division = ?";
         int countryId = -1;
@@ -152,6 +184,11 @@ public class CustomerDAO {
         return countryIdToCodeMap.get(countryId);
     }
 
+    /**
+     * Generate division report observable list.
+     *
+     * @return the observable list
+     */
     public static ObservableList<DivisionReportRow> generateDivisionReport() {
         ObservableList<DivisionReportRow> reportDataList = FXCollections.observableArrayList();
         String sql = "SELECT fld.Division AS DivisionName, COUNT(c.Customer_ID) AS TotalCustomers " +
@@ -174,6 +211,12 @@ public class CustomerDAO {
         return reportDataList;
     }
 
+    /**
+     * Customer has appointments boolean.
+     *
+     * @param customerId the customer id
+     * @return the boolean
+     */
     public static boolean customerHasAppointments(int customerId) {
         String sql = "SELECT * FROM appointments WHERE Customer_ID = ?";
 

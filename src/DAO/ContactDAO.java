@@ -12,6 +12,9 @@ import java.util.List;
 
 import static Help.JDBC.connection;
 
+/**
+ * The type Contact dao.
+ */
 public class ContactDAO {
     public static ObservableList<Contact> getAllContacts() throws SQLException {
         ObservableList<Contact> contactObservableList = FXCollections.observableArrayList();

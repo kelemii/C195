@@ -12,9 +12,19 @@ import java.util.Collections;
 
 import static Help.JDBC.connection;
 
+/**
+ * The type User dao.
+ */
 public class UserDAO {
     private static final String LOGIN_QUERY = "SELECT * FROM users WHERE User_Name = ? AND Password = ?";
 
+    /**
+     * Check login int.
+     *
+     * @param username the username
+     * @param password the password
+     * @return the int
+     */
     public int checkLogin(String username, String password) {
         int userID = -1;
 
@@ -37,6 +47,12 @@ public class UserDAO {
         return userID;
     }
 
+    /**
+     * Gets user i ds.
+     *
+     * @return the user i ds
+     * @throws SQLException the sql exception
+     */
 //    public ArrayList<Integer> getUserIDs() throws SQLException {
 //        return connection.prepareStatement("Select USER_ID FROM USERS");
 //    }

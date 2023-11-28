@@ -12,9 +12,20 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+/**
+ * The type Appointment alert.
+ */
 public class AppointmentAlert {
+    /**
+     * The Appointment dao.
+     */
     AppointmentDAO appointmentDAO = new AppointmentDAO();
 
+    /**
+     * Check upcoming appointments.
+     *
+     * @throws SQLException the sql exception
+     */
     public void checkUpcomingAppointments() throws SQLException {
         // Get the current local time of the user's computer
         LocalDateTime currentLocalTime = LocalDateTime.now();

@@ -16,9 +16,19 @@ import java.util.List;
 
 import static Help.JDBC.connection;
 
+/**
+ * The type First level division dao.
+ */
 public class FirstLevelDivisionDAO {
 
-    // Retrieve all divisions
+    /**
+     * Gets all divisions.
+     *
+     * @param id the id
+     * @return the all divisions
+     * @throws SQLException the sql exception
+     */
+// Retrieve all divisions
     public static ObservableList<FirstLevelDivision> getAllDivisions( String id) throws SQLException {
         ObservableList<FirstLevelDivision> divisions = FXCollections.observableArrayList();
         String sql = "SELECT * FROM client_schedule.first_level_divisions WHERE Country_ID = ?";
@@ -43,6 +53,14 @@ public class FirstLevelDivisionDAO {
         }
         return divisions;
     }
+
+    /**
+     * Gets division id by name.
+     *
+     * @param divisionName the division name
+     * @return the division id by name
+     * @throws SQLException the sql exception
+     */
     public static int getDivisionIdByName(String divisionName) throws SQLException {
         String sql = "SELECT Division_ID FROM client_schedule.first_level_divisions WHERE Division = ?";
         int divisionId = -1; // Default value if division is not found
