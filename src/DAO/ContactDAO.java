@@ -15,7 +15,6 @@ import static Help.JDBC.connection;
 public class ContactDAO {
     public static ObservableList<Contact> getAllContacts() throws SQLException {
         ObservableList<Contact> contactObservableList = FXCollections.observableArrayList();
-//        List<Contact> contactList = new ArrayList<>();
         String sql = "SELECT * FROM client_schedule.CONTACTS";
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         ResultSet resultSet = preparedStatement.executeQuery();
@@ -26,7 +25,6 @@ public class ContactDAO {
             Contact contact = new Contact(contactID, contactName, contactEmail);
             contactObservableList.add(contact);
         }
-//        contactList.forEach(contact -> contactObservableList.add(contact));
         return contactObservableList;
     }
 }

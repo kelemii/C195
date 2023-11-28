@@ -69,7 +69,7 @@ public class AddAppointment {
 
     /**
      * Populates the contact selection ComboBox.
-     *
+     * LAMBDA - acquires contactName from each contact in the list and adds it to the contactNameList
      * @throws SQLException If an SQL exception occurs while retrieving contact data.
      */
     private void populateContacts() throws SQLException {

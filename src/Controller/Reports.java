@@ -42,7 +42,7 @@ public class Reports {
     private TableView<DivisionReportRow> divisionTable;
     /**
      * Initializes the Reports view and populates it with data.
-     *
+     * LAMBDA 2 acts as a listener for the contactCombos selected value
      * @throws SQLException If an SQL exception occurs.
      */
     @FXML
@@ -67,6 +67,9 @@ public class Reports {
         reportTable.getItems().addAll(appointmentReportData);
         ObservableList<DivisionReportRow> divisionReportData = generateDivisionReport();
         divisionTable.getItems().addAll(divisionReportData);
+        contactCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+            handleContactSelection(newValue);
+        });
     }
     /**
      * Populates the contact combo box with contact names.
@@ -84,9 +87,7 @@ public class Reports {
      * Handles the selection of a contact in the combo box and filters appointments accordingly.
      */
     @FXML
-    private void handleContactSelection() {
-        String selectedContact = contactCombo.getValue();
-
+    private void handleContactSelection(String selectedContact) {
         if (selectedContact != null) {
             // Query appointments for the selected contact
             List<Appointment> appointments = appointmentDAO.getAppointmentsForContact(selectedContact);
