@@ -112,7 +112,6 @@ public class AddAppointment {
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
-                // Handle exception
             }
         }
 
@@ -160,33 +159,47 @@ public class AddAppointment {
 
     public void AddAppSave(ActionEvent actionEvent) throws SQLException {
         if (validateForm()) {
-            int id = Integer.parseInt(AppointmentID.getText());
-            String title = AppointmentTitle.getText();
-            String description = AppointmentDesc.getText();
-            String location = AppointmentLoc.getText();
-            String type = AppointmentType.getText();
-            int customerId = getCustomerId(AppointmentCustomer.getValue());
-            int userId = AppointmentUser.getValue();
-            int contactId = getContactId(AppointmentContact.getValue());
-            LocalTime startT = LocalTime.parse(AppointmentStartT.getValue());
-            LocalTime endT = LocalTime.parse(AppointmentEndT.getValue());
-            ZoneId localZone = ZoneId.systemDefault();
-            ZoneId utcZone = ZoneId.of("UTC");
-            LocalDateTime startDateTime = LocalDateTime.of(AppointmentStartD.getValue(), startT);
-            ZonedDateTime startLocal = startDateTime.atZone(localZone);
-            ZonedDateTime startUTC = startLocal.withZoneSameInstant(utcZone);
-            LocalDateTime endDateTime = LocalDateTime.of(AppointmentEndD.getValue(), endT);
-            ZonedDateTime endLocal = endDateTime.atZone(localZone);
-            ZonedDateTime endUTC = endLocal.withZoneSameInstant(utcZone);
-            LocalDateTime createDate = LocalDateTime.now();
-            String createdBy = "Admin";
-            LocalDateTime lastUpdate = LocalDateTime.now();
-            String lastUpdatedBy = "Admin";
-            Appointment newAppointment = new Appointment(id, title, description, location, type,
-                    startUTC.toLocalDateTime(), endUTC.toLocalDateTime(), createDate, createdBy, lastUpdate, lastUpdatedBy, customerId, userId, contactId);
-            appointmentDAO.saveAppointment(newAppointment);
-            Stage stage = (Stage) AddAppCancelBtn.getScene().getWindow();
-            stage.close();
+            LocalDate startDate = AppointmentStartD.getValue();
+            LocalTime startTime = LocalTime.parse(AppointmentStartT.getValue());
+            LocalDateTime startDateTime = LocalDateTime.of(startDate, startTime);
+            DayOfWeek startDayOfWeek = startDateTime.getDayOfWeek();
+
+            LocalDate endDate = AppointmentEndD.getValue();
+            LocalTime endTime = LocalTime.parse(AppointmentEndT.getValue());
+            LocalDateTime endDateTime = LocalDateTime.of(endDate, endTime);
+            DayOfWeek endDayOfWeek = endDateTime.getDayOfWeek();
+
+            if (startDayOfWeek == DayOfWeek.SATURDAY || startDayOfWeek == DayOfWeek.SUNDAY ||
+                    endDayOfWeek == DayOfWeek.SATURDAY || endDayOfWeek == DayOfWeek.SUNDAY) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                ResourceBundle resourceBundle = ResourceBundle.getBundle("lang/AddAppointment", Locale.getDefault());
+                alert.setTitle(resourceBundle.getString("weekendAppointmentTitle"));
+                alert.setHeaderText(null);
+                alert.setContentText(resourceBundle.getString("weekendAppointmentContent"));
+                alert.showAndWait();
+            } else {
+                int id = Integer.parseInt(AppointmentID.getText());
+                String title = AppointmentTitle.getText();
+                String description = AppointmentDesc.getText();
+                String location = AppointmentLoc.getText();
+                String type = AppointmentType.getText();
+                int customerId = getCustomerId(AppointmentCustomer.getValue());
+                int userId = AppointmentUser.getValue();
+                int contactId = getContactId(AppointmentContact.getValue());
+                ZoneId localZone = ZoneId.systemDefault();
+                ZoneId utcZone = ZoneId.of("UTC");
+                LocalDateTime startUTC = startDateTime.atZone(localZone).withZoneSameInstant(utcZone).toLocalDateTime();
+                LocalDateTime endUTC = endDateTime.atZone(localZone).withZoneSameInstant(utcZone).toLocalDateTime();
+                LocalDateTime createDate = LocalDateTime.now();
+                String createdBy = "Admin";
+                LocalDateTime lastUpdate = LocalDateTime.now();
+                String lastUpdatedBy = "Admin";
+                Appointment newAppointment = new Appointment(id, title, description, location, type,
+                        startUTC, endUTC, createDate, createdBy, lastUpdate, lastUpdatedBy, customerId, userId, contactId);
+                appointmentDAO.saveAppointment(newAppointment);
+                Stage stage = (Stage) AddAppCancelBtn.getScene().getWindow();
+                stage.close();
+            }
         }
     }
     /**
@@ -210,7 +223,6 @@ public class AddAppointment {
                 }
             }
         } catch (SQLException e) {
-            // Handle any SQL exceptions here
             e.printStackTrace();
         }
         return preparedStatement.executeQuery().getInt("CONTACT_ID");
@@ -285,7 +297,7 @@ public class AddAppointment {
             alert.setContentText(resourceBundle.getString("Form_Validation_Error_Content"));
             alert.showAndWait();
 
-            return false; // At least one required field is empty
+            return false;
         }
         LocalDate startDate = AppointmentStartD.getValue();
         LocalDate endDate = AppointmentEndD.getValue();
@@ -297,14 +309,14 @@ public class AddAppointment {
         if (startDateTime.isAfter(endDateTime)) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             ResourceBundle resourceBundle = ResourceBundle.getBundle("lang/AddAppointment", Locale.getDefault());
-            alert.setTitle(resourceBundle.getString("Form_Validation_Error_Title"));
-            alert.setHeaderText(resourceBundle.getString("Form_Validation_Error_Header"));
-            alert.setContentText(resourceBundle.getString("Form_Validation_Error_Content"));
+            alert.setTitle(resourceBundle.getString("Form_Validation_Bad_Dates"));
+            alert.setHeaderText(resourceBundle.getString("Form_Validation_Bad_Date"));
+            alert.setContentText(resourceBundle.getString("Form_Validation_Fix_Date"));
             alert.showAndWait();
-            return false; // Start date is after the end date
+            return false;
         }
 
-        return true; // All required fields are filled and the start date is before the end date
+        return true;
     }
     }
 
