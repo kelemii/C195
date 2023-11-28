@@ -75,10 +75,8 @@ public class Login implements Initializable {
         currentUserID = loginForm.checkLogin(user, pwd);
 
         if (currentUserID > 0) {
-            // Log successful login attempt
             logLoginActivity(user, true);
 
-            // Open the main page
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("/View/Main.fxml"));
             Parent root = loader.load();
@@ -90,7 +88,6 @@ public class Login implements Initializable {
             AppointmentAlert appointmentAlert = new AppointmentAlert();
             appointmentAlert.checkUpcomingAppointments();
         } else {
-            // Log failed login attempt
             logLoginActivity(user, false);
 
             Alert alert = new Alert(Alert.AlertType.ERROR);

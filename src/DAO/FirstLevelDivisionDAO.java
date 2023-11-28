@@ -28,7 +28,6 @@ public class FirstLevelDivisionDAO {
      * @return the all divisions
      * @throws SQLException the sql exception
      */
-// Retrieve all divisions
     public static ObservableList<FirstLevelDivision> getAllDivisions( String id) throws SQLException {
         ObservableList<FirstLevelDivision> divisions = FXCollections.observableArrayList();
         String sql = "SELECT * FROM client_schedule.first_level_divisions WHERE Country_ID = ?";
@@ -63,7 +62,7 @@ public class FirstLevelDivisionDAO {
      */
     public static int getDivisionIdByName(String divisionName) throws SQLException {
         String sql = "SELECT Division_ID FROM client_schedule.first_level_divisions WHERE Division = ?";
-        int divisionId = -1; // Default value if division is not found
+        int divisionId = -1;
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);

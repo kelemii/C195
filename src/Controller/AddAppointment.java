@@ -130,11 +130,11 @@ public class AddAppointment {
      */
     public void populateTimeComboBoxes() {
         ObservableList<String> appointmentTimes = FXCollections.observableArrayList();
-        ZoneId easternZone = ZoneId.of("US/Eastern");  // Set the timezone to Eastern Time (ET)
-        ZoneId localZone = ZoneId.systemDefault();  // Get the local timezone of the system
+        ZoneId easternZone = ZoneId.of("US/Eastern");
+        ZoneId localZone = ZoneId.systemDefault();
 
-        LocalTime firstAppointment = LocalTime.of(8, 0);  // Set the business hours in ET (0800)
-        LocalTime lastAppointment = LocalTime.of(22, 0);  // Set the business hours in ET (2200)
+        LocalTime firstAppointment = LocalTime.of(8, 0);
+        LocalTime lastAppointment = LocalTime.of(22, 0);
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
         while (firstAppointment.isBefore(lastAppointment)) {
@@ -248,7 +248,6 @@ public class AddAppointment {
                 }
             }
         } catch (SQLException e) {
-            // Handle any SQL exceptions here
             e.printStackTrace();
         }
         return preparedStatement.executeQuery().getInt("CUSTOMER_ID");

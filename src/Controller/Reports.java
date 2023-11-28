@@ -89,10 +89,8 @@ public class Reports {
     @FXML
     private void handleContactSelection(String selectedContact) {
         if (selectedContact != null) {
-            // Query appointments for the selected contact
             List<Appointment> appointments = appointmentDAO.getAppointmentsForContact(selectedContact);
 
-            // Populate the TableView with the filtered appointments
             populateAppointments(appointments);
         }
     }

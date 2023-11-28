@@ -16,7 +16,6 @@ public class Contact {
      * @param contactName the contact name
      * @param email       the email
      */
-// Constructor
     public Contact(int contactId, String contactName, String email) {
         this.contactId = contactId;
         this.contactName = contactName;
@@ -28,7 +27,6 @@ public class Contact {
      *
      * @return the contact id
      */
-// Getters
     public int getContactId() {
         return contactId;
     }
@@ -56,7 +54,6 @@ public class Contact {
      *
      * @param contactId the contact id
      */
-// Setters
     public void setContactId(int contactId) {
         this.contactId = contactId;
     }
@@ -79,7 +76,6 @@ public class Contact {
         this.email = email;
     }
 
-    // Override toString for better object representation in logs or debugging
     @Override
     public String toString() {
         return "Contact{" +
@@ -89,5 +85,4 @@ public class Contact {
                 '}';
     }
 
-    // Additional methods like equals and hashCode could be implemented as needed
 }

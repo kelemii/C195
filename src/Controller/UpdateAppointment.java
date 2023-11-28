@@ -80,8 +80,8 @@ public class UpdateAppointment {
         AppointmentEndD.setValue(selectedAppointment.getEnd().toLocalDate());
         AppointmentStartT.setValue(String.valueOf(selectedAppointment.getStart().toLocalTime()));
         AppointmentEndT.setValue(String.valueOf(selectedAppointment.getEnd().toLocalTime()));
-        AppointmentCustomer.setValue(getCustomerName(selectedAppointment.getCustomerId())); // Assuming you have a method to get customer name
-        AppointmentUser.setValue(selectedAppointment.getUserId()); // Assuming you have a method to get user name
+        AppointmentCustomer.setValue(getCustomerName(selectedAppointment.getCustomerId()));
+        AppointmentUser.setValue(selectedAppointment.getUserId());
         AppointmentContact.setValue(getContactName(selectedAppointment.getContactId()));
     }
     /**
@@ -195,7 +195,6 @@ public class UpdateAppointment {
                 }
             }
         } catch (SQLException e) {
-            // Handle any SQL exceptions here
             e.printStackTrace();
         }
         return preparedStatement.executeQuery().getInt("CONTACT_ID");
@@ -219,7 +218,6 @@ public class UpdateAppointment {
                 }
             }
         } catch (SQLException e) {
-            // Handle any SQL exceptions here
             e.printStackTrace();
         }
         return preparedStatement.executeQuery().getString("CONTACT_Name");
@@ -245,7 +243,6 @@ public class UpdateAppointment {
                 }
             }
         } catch (SQLException e) {
-            // Handle any SQL exceptions here
             e.printStackTrace();
         }
         return preparedStatement.executeQuery().getInt("CUSTOMER_ID");
@@ -269,7 +266,6 @@ public class UpdateAppointment {
                 }
             }
         } catch (SQLException e) {
-            // Handle any SQL exceptions here
             e.printStackTrace();
         }
         return preparedStatement.executeQuery().getString("CUSTOMER_Name");
@@ -314,7 +310,7 @@ public class UpdateAppointment {
             alert.setHeaderText(resourceBundle.getString("Form_Validation_Error_Header"));
             alert.setContentText(resourceBundle.getString("Form_Validation_Error_Content"));
             alert.showAndWait();
-            return false; // At least one required field is empty
+            return false;
         }
         LocalDate startDate = AppointmentStartD.getValue();
         LocalDate endDate = AppointmentEndD.getValue();
@@ -330,9 +326,9 @@ public class UpdateAppointment {
             alert.setHeaderText(resourceBundle.getString("Form_Validation_Error_Header"));
             alert.setContentText(resourceBundle.getString("Form_Validation_Error_Content"));
             alert.showAndWait();
-            return false; // Start date is after the end date
+            return false;
         }
 
-        return true; // All required fields are filled and the start date is before the end date
+        return true;
     }
 }

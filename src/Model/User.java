@@ -26,7 +26,6 @@ public class User {
      * @param lastUpdate    the last update
      * @param lastUpdatedBy the last updated by
      */
-// Constructor
     public User(int userId, String userName, String password, LocalDateTime createDate,
                 String createdBy, LocalDateTime lastUpdate, String lastUpdatedBy) {
         this.userId = userId;
@@ -43,7 +42,6 @@ public class User {
      *
      * @return the user id
      */
-// Getters
     public int getUserId() {
         return userId;
     }
@@ -107,7 +105,7 @@ public class User {
      *
      * @param userId the user id
      */
-// Setters
+
     public void setUserId(int userId) {
         this.userId = userId;
     }
@@ -166,7 +164,6 @@ public class User {
         this.lastUpdatedBy = lastUpdatedBy;
     }
 
-    // Override toString for better object representation
     @Override
     public String toString() {
         return "User{" +

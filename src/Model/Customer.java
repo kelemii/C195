@@ -26,7 +26,6 @@ public class Customer {
      * @param divisionId   the division id
      * @param division     the division
      */
-// Constructor
     public Customer(int customerId, String customerName, String address, String postalCode,
                     String phone, int divisionId, String division) {
         this.customerId = customerId;
@@ -43,7 +42,6 @@ public class Customer {
      *
      * @return the customer id
      */
-// Getters and setters for each field
     public int getCustomerId() {
         return customerId;
     }

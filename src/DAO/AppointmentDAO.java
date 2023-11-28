@@ -50,7 +50,6 @@ public class AppointmentDAO {
             }
 
         } catch (SQLException e) {
-            // Properly handle exception
             e.printStackTrace();
         }
 
@@ -110,7 +109,6 @@ public class AppointmentDAO {
                 }
             }
         } catch (SQLException e) {
-            // Handle any SQL exceptions here
             e.printStackTrace();
         }
     }
@@ -151,7 +149,6 @@ public class AppointmentDAO {
 
             }
         } catch (SQLException e) {
-            // Handle any SQL exceptions here
             e.printStackTrace();
         }
     }

@@ -62,11 +62,9 @@ public class Main implements Initializable {
             LocalDateTime startUTC = appointment.getStart();
             LocalDateTime endUTC = appointment.getEnd();
 
-            // Convert UTC times to local timezone
             ZonedDateTime startLocal = startUTC.atZone(ZoneId.of("UTC")).withZoneSameInstant(localZone);
             ZonedDateTime endLocal = endUTC.atZone(ZoneId.of("UTC")).withZoneSameInstant(localZone);
 
-            // Update appointment start and end times with local times
             appointment.setStart(startLocal.toLocalDateTime());
             appointment.setEnd(endLocal.toLocalDateTime());
 
@@ -110,7 +108,6 @@ public class Main implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle){
-        // Initialize tables
         try {
             initializeAppointments();
             initializeCustomers();
@@ -130,9 +127,8 @@ public class Main implements Initializable {
         loader.setLocation(getClass().getResource("/View/AddAppointment.fxml"));
         Parent root = loader.load();
 
-        // Create a new stage for the popup
         Stage stage = new Stage();
-        stage.initModality(Modality.APPLICATION_MODAL); // Set the window to be modal
+        stage.initModality(Modality.APPLICATION_MODAL);
         stage.setTitle("Add New Appointment");
         stage.setScene(new Scene(root));
         stage.showAndWait();
@@ -153,13 +149,10 @@ public class Main implements Initializable {
             loader.setLocation(getClass().getResource("/View/UpdateAppointment.fxml"));
             Parent root = loader.load();
 
-            // Access the controller for the second view
             UpdateAppointment updateAppointmentController = loader.getController();
 
-            // Pass the data to the second view's controller
             updateAppointmentController.initData(selectedAppointment);
 
-            // Create a new stage for the second view
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Update Appointment");
@@ -180,12 +173,10 @@ public class Main implements Initializable {
         if (selectedAppointment != null) {
             int appointmentId = selectedAppointment.getAppointmentId();
 
-            // Call the DAO method to delete the appointment from the database
             try {
                 int rowsAffected = AppointmentDAO.deleteAppointment(appointmentId, connection);
 
                 if (rowsAffected > 0) {
-                    // Remove the appointment from the ObservableList
                     appointmentsTable.getItems().remove(selectedAppointment);
                     ResourceBundle resourceBundle = ResourceBundle.getBundle("lang/main", Locale.getDefault());
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -194,17 +185,13 @@ public class Main implements Initializable {
                     alert.setContentText(selectedAppointment.getAppointmentId() + " " + selectedAppointment.getType() + " " + resourceBundle.getString("Appointment_Deleted_Message"));
                     alert.showAndWait();
 
-// Refresh the TableView to reflect the changes
                     appointmentsTable.refresh();
 
                 } else {
-                    // Handle the case where deletion fails (e.g., show an error message)
-                    // You can display an alert or log an error message here
                     System.err.println("Failed to delete appointment from the database.");
                 }
             } catch (SQLException e) {
-                // Handle any exceptions that occur during deletion
-                e.printStackTrace(); // You can log the error or handle it based on your application's needs
+                e.printStackTrace();
             }
         }
     }
@@ -219,13 +206,11 @@ public class Main implements Initializable {
         loader.setLocation(getClass().getResource("/View/Reports.fxml"));
         Parent root = loader.load();
 
-        // Create a new stage for the popup
         Stage stage = new Stage();
-        stage.initModality(Modality.APPLICATION_MODAL); // Set the window to be modal
+        stage.initModality(Modality.APPLICATION_MODAL);
         stage.setTitle("Reports");
         stage.setScene(new Scene(root));
         stage.showAndWait();
-//        initializeAppointments();
     }
     /**
      * Handles user logout.
@@ -234,12 +219,10 @@ public class Main implements Initializable {
      * @throws IOException If an I/O error occurs.
      */
     public void handleLogout(ActionEvent actionEvent) throws IOException {
-        // Load the login page
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("/View/Login.fxml"));
         Parent root = loader.load();
 
-        // Get the stage and set the login scene
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);
@@ -258,9 +241,8 @@ public class Main implements Initializable {
         loader.setLocation(getClass().getResource("/View/AddCustomer.fxml"));
         Parent root = loader.load();
 
-        // Create a new stage for the popup
         Stage stage = new Stage();
-        stage.initModality(Modality.APPLICATION_MODAL); // Set the window to be modal
+        stage.initModality(Modality.APPLICATION_MODAL);
         stage.setTitle("Add New Customer");
         stage.setScene(new Scene(root));
         stage.showAndWait();
@@ -281,13 +263,10 @@ public class Main implements Initializable {
             loader.setLocation(getClass().getResource("/View/UpdateCustomer.fxml"));
             Parent root = loader.load();
 
-            // Access the controller for the second view
             UpdateCustomer updateCustomerController = loader.getController();
 
-            // Pass the data to the second view's controller
             updateCustomerController.initData(selectedCustomer);
 
-            // Create a new stage for the second view
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Update Customer");
@@ -306,11 +285,9 @@ public class Main implements Initializable {
         if (selectedCustomer != null) {
             int customerId = selectedCustomer.getCustomerId();
 
-            // Check if there are any appointments associated with the customer
             try {
                 boolean hasAppointments = CustomerDAO.customerHasAppointments(customerId);
                 if (hasAppointments) {
-                    // Show an alert indicating that appointments must be deleted first
                     ResourceBundle resourceBundle = ResourceBundle.getBundle("lang/main", Locale.getDefault());
                     String errorMessage = resourceBundle.getString("Customer_Delete_Appointments_Error");
                     String errorTitle = resourceBundle.getString("Customer_Delete_Error_Title");
@@ -320,7 +297,6 @@ public class Main implements Initializable {
                     alert.setContentText(errorMessage);
                     alert.showAndWait();
                 } else {
-                    // No appointments are associated with the customer, proceed with deletion
                     int rowsAffected = CustomerDAO.deleteCustomer(customerId);
                     if (rowsAffected > 0) {
                         customersTable.getItems().remove(selectedCustomer);
@@ -413,7 +389,6 @@ public class Main implements Initializable {
         AppUserID.setCellValueFactory(new PropertyValueFactory<>("UserId"));
         appointmentsTable.setItems(appointmentData);
 
-        // Filter the appointments for the current week
         filteredAppointments = appointmentData.stream()
                 .filter(appointment -> {
                     LocalDateTime appointmentStart = appointment.getStart();
@@ -422,7 +397,6 @@ public class Main implements Initializable {
                 })
                 .collect(Collectors.toList());
 
-        // Update the TableView with the filtered appointments
         appointmentsTable.setItems(FXCollections.observableArrayList(filteredAppointments));
 
     }

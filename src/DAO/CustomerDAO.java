@@ -46,7 +46,6 @@ public class CustomerDAO {
             }
 
         } catch (SQLException e) {
-            // Properly handle exception
             e.printStackTrace();
         }
 
@@ -97,7 +96,6 @@ public class CustomerDAO {
             }
 
             if (customer.getCustomerId() == 0) {
-                // If it's a new customer, get the generated customer ID
                 ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
                 if (generatedKeys.next()) {
                     customer.setCustomerId(generatedKeys.getInt(1));
@@ -138,7 +136,6 @@ public class CustomerDAO {
             }
 
             if (customer.getCustomerId() == 0) {
-                // If it's a new customer, get the generated customer ID
                 ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
                 if (generatedKeys.next()) {
                     customer.setCustomerId(generatedKeys.getInt(1));
@@ -174,7 +171,6 @@ public class CustomerDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            // Handle exception
         }
         Map<Integer, String> countryIdToCodeMap = new HashMap<>();
         countryIdToCodeMap.put(1, "US");
@@ -230,7 +226,6 @@ public class CustomerDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            // Handle exception
         }
 
         return false;

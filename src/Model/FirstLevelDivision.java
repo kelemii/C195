@@ -13,7 +13,7 @@ public class FirstLevelDivision {
     private String createdBy;
     private LocalDateTime lastUpdate;
     private String lastUpdatedBy;
-    private int countryId; // This is a foreign key reference to the Country table
+    private int countryId;
 
     /**
      * Instantiates a new First level division.
@@ -26,7 +26,6 @@ public class FirstLevelDivision {
      * @param lastUpdatedBy the last updated by
      * @param countryId     the country id
      */
-// Constructor
     public FirstLevelDivision(int divisionId, String division, LocalDateTime createDate,
                               String createdBy, LocalDateTime lastUpdate, String lastUpdatedBy,
                               int countryId) {
@@ -44,7 +43,6 @@ public class FirstLevelDivision {
      *
      * @return the division id
      */
-// Getters and setters for each field
     public int getDivisionId() {
         return divisionId;
     }
@@ -165,8 +163,5 @@ public class FirstLevelDivision {
     public void setCountryId(int countryId) {
         this.countryId = countryId;
     }
-
-    // You can add additional methods like toString(), equals(), and hashCode() as needed.
-
 }
 

@@ -88,7 +88,6 @@ public class AddCustomer {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            // Handle exception
         }
     }
     /**
@@ -96,9 +95,9 @@ public class AddCustomer {
      */
     public void populateCountryComboBoxes() {
         ObservableList<String> countries = FXCollections.observableArrayList();
-        countries.add("US"); // 1
-        countries.add("UK"); // 2
-        countries.add("Canada"); //3
+        countries.add("US");
+        countries.add("UK");
+        countries.add("Canada");
         CustomerCountry.setItems(countries);
     }
 
@@ -123,10 +122,8 @@ public class AddCustomer {
 
         ObservableList<String> stateNames = FXCollections.observableArrayList();
 
-        // Extract division names from the FirstLevelDivision objects and add them to stateNames
         stateNames.addAll(states1.stream().map(FirstLevelDivision::getDivision).collect(Collectors.toList()));
 
-        // Set the items in the CustomerState ComboBox
         CustomerState.setItems(stateNames);
     }
     /**
@@ -167,9 +164,9 @@ public class AddCustomer {
             alert.setContentText(resourceBundle.getString("Form_Validation_Error_Content"));
             alert.showAndWait();
 
-            return false; // At least one required field is empty
+            return false;
         }
 
-        return true; // All required fields are filled, and the division is valid
+        return true;
     }
 }

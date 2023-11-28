@@ -64,7 +64,7 @@ public class UpdateCustomer {
         CustomerAdd.setText(selectedCustomer.getAddress());
         CustomerZip.setText(selectedCustomer.getPostalCode());
         CustomerPhone.setText(selectedCustomer.getPhone());
-        CustomerCountry.setValue(customerDAO.getCountryIdByDivisionName(selectedCustomer.getDivision())); //this needs a query to identify the country code and a conversion into the string
+        CustomerCountry.setValue(customerDAO.getCountryIdByDivisionName(selectedCustomer.getDivision()));
         CustomerState.setValue(selectedCustomer.getDivision());
     }
     /**
@@ -103,10 +103,7 @@ public class UpdateCustomer {
 
         ObservableList<String> stateNames = FXCollections.observableArrayList();
 
-        // Extract division names from the FirstLevelDivision objects and add them to stateNames
         stateNames.addAll(states1.stream().map(FirstLevelDivision::getDivision).collect(Collectors.toList()));
-
-        // Set the items in the CustomerState ComboBox
         CustomerState.setItems(stateNames);
     }
     /**
@@ -127,9 +124,9 @@ public class UpdateCustomer {
             alert.setHeaderText(resourceBundle.getString("Form_Validation_Error_Header"));
             alert.setContentText(resourceBundle.getString("Form_Validation_Error_Content"));
             alert.showAndWait();
-            return false; // At least one required field is empty
+            return false;
         }
 
-        return true; // All required fields are filled, and the division is valid
+        return true;
     }
 }

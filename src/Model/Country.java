@@ -24,7 +24,6 @@ public class Country {
      * @param lastUpdate    the last update
      * @param lastUpdatedBy the last updated by
      */
-// Constructor
     public Country(int countryId, String country, LocalDateTime createDate,
                    String createdBy, LocalDateTime lastUpdate, String lastUpdatedBy) {
         this.countryId = countryId;
@@ -40,7 +39,6 @@ public class Country {
      *
      * @return the country id
      */
-// Getters and setters for each field
     public int getCountryId() {
         return countryId;
     }
@@ -143,8 +141,5 @@ public class Country {
     public void setLastUpdatedBy(String lastUpdatedBy) {
         this.lastUpdatedBy = lastUpdatedBy;
     }
-
-    // You can also add toString(), hashCode(), equals(), etc., as needed.
-
 }
 

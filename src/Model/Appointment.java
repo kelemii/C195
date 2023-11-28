@@ -40,7 +40,6 @@ public class Appointment {
      * @param userId        the user id
      * @param contactId     the contact id
      */
-// Constructor
     public Appointment(int appointmentId, String title, String description, String location,
                        String type, LocalDateTime start, LocalDateTime end, LocalDateTime createDate,
                        String createdBy, LocalDateTime lastUpdate, String lastUpdatedBy,
@@ -66,7 +65,6 @@ public class Appointment {
      *
      * @return the appointment id
      */
-// Getters
     public int getAppointmentId() {
         return appointmentId;
     }
@@ -193,7 +191,6 @@ public class Appointment {
      *
      * @param appointmentId the appointment id
      */
-// Setters
     public void setAppointmentId(int appointmentId) {
         this.appointmentId = appointmentId;
     }
@@ -315,7 +312,7 @@ public class Appointment {
         this.contactId = contactId;
     }
 
-    // Additional methods (equals, hashCode, toString, etc.) can be included as needed
+
 }
 
 

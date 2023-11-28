@@ -28,7 +28,6 @@ public class UserDAO {
     public int checkLogin(String username, String password) {
         int userID = -1;
 
-        // Use the connection from the pool
         try {
              PreparedStatement preparedStatement = connection.prepareStatement(LOGIN_QUERY);
             preparedStatement.setString(1, username);
@@ -40,7 +39,6 @@ public class UserDAO {
                 }
             }
         } catch (SQLException e) {
-            // Properly handle exception
             e.printStackTrace();
         }
 
@@ -53,9 +51,7 @@ public class UserDAO {
      * @return the user i ds
      * @throws SQLException the sql exception
      */
-//    public ArrayList<Integer> getUserIDs() throws SQLException {
-//        return connection.prepareStatement("Select USER_ID FROM USERS");
-//    }
+
     public ObservableList<Integer> getUserIDs() throws SQLException {
         ObservableList<Integer> userIds = FXCollections.observableArrayList();
 
