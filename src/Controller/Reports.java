@@ -68,7 +68,7 @@ public class Reports {
         ObservableList<DivisionReportRow> divisionReportData = generateDivisionReport();
         divisionTable.getItems().addAll(divisionReportData);
         contactCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
-            handleContactSelection(newValue);
+            handleContactSelection();
         });
     }
     /**
@@ -87,13 +87,14 @@ public class Reports {
      * Handles the selection of a contact in the combo box and filters appointments accordingly.
      */
     @FXML
-    private void handleContactSelection(String selectedContact) {
+    private void handleContactSelection() {
+        String selectedContact = contactCombo.getValue(); // Get the selected contact
         if (selectedContact != null) {
             List<Appointment> appointments = appointmentDAO.getAppointmentsForContact(selectedContact);
-
             populateAppointments(appointments);
         }
     }
+
     /**
      * Populates the appointments table with a list of appointments.
      *
