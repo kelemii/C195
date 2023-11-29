@@ -33,6 +33,9 @@ import java.util.ResourceBundle;
  */
 public class Login implements Initializable {
     Stage stage;
+    /**
+     * initalizes my userID as 0
+     */
     public int currentUserID = 0;
     @FXML
     private TextField UserName, password;

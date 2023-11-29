@@ -52,8 +52,17 @@ public class UpdateAppointment {
     private ComboBox<Integer> AppointmentUser;
     @FXML
     private Button UpdateAppCancelBtn;
+    /**
+     * initializes my appointmentDAO
+     */
     public AppointmentDAO appointmentDAO = new AppointmentDAO();
+    /**
+     * initializes my userDAO
+     */
     public UserDAO userDAO = new UserDAO();
+    /**
+     * initializes my contactDAO
+     */
     public ContactDAO contactDAO;
     /**
      * Initializes the `UpdateAppointment` view.

@@ -16,6 +16,11 @@ import static Help.JDBC.connection;
  * The type Contact dao.
  */
 public class ContactDAO {
+    /**
+     * this returns all contacts in my DB
+     * @return list of contacts
+     * @throws SQLException if sql error occurs
+     */
     public static ObservableList<Contact> getAllContacts() throws SQLException {
         ObservableList<Contact> contactObservableList = FXCollections.observableArrayList();
         String sql = "SELECT * FROM client_schedule.CONTACTS";
