@@ -19,6 +19,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -51,9 +52,9 @@ public class UpdateAppointment {
     private ComboBox<Integer> AppointmentUser;
     @FXML
     private Button UpdateAppCancelBtn;
-    private AppointmentDAO appointmentDAO;
-    private UserDAO userDAO = new UserDAO();
-    private ContactDAO contactDAO;
+    public AppointmentDAO appointmentDAO = new AppointmentDAO();
+    public UserDAO userDAO = new UserDAO();
+    public ContactDAO contactDAO;
     /**
      * Initializes the `UpdateAppointment` view.
      *
@@ -158,10 +159,10 @@ public class UpdateAppointment {
             LocalDate startDate = AppointmentStartD.getValue();
             LocalTime startTime = LocalTime.parse(AppointmentStartT.getValue());
             LocalDateTime startDateTime = LocalDateTime.of(startDate, startTime);
-
             LocalDate endDate = AppointmentEndD.getValue();
             LocalTime endTime = LocalTime.parse(AppointmentEndT.getValue());
             LocalDateTime endDateTime = LocalDateTime.of(endDate, endTime);
+            List<Appointment> customerAppointments = appointmentDAO.getAppointmentsForCustomer(customerId);
 
             LocalDateTime startUTC = convertTime(startDateTime).toLocalDateTime();
             LocalDateTime endUTC = convertTime(endDateTime).toLocalDateTime();
@@ -172,8 +173,31 @@ public class UpdateAppointment {
 
             DayOfWeek startDayOfWeek = startDateTime.getDayOfWeek();
             DayOfWeek endDayOfWeek = endDateTime.getDayOfWeek();
+            ZoneId estTimeZone = ZoneId.of("America/New_York"); // Eastern Standard Time
+            LocalTime estBusinessStart = LocalTime.of(8, 0); // 8:00 AM EST
+            LocalTime estBusinessEnd = LocalTime.of(22, 0); // 10:00 PM EST
 
-            if (startDayOfWeek == DayOfWeek.SATURDAY || startDayOfWeek == DayOfWeek.SUNDAY ||
+            ZonedDateTime startZonedDateTime = startDateTime.atZone(estTimeZone);
+            ZonedDateTime endZonedDateTime = endDateTime.atZone(estTimeZone);
+
+
+            boolean hasOverlap = false;
+
+            for (Appointment appointment : customerAppointments) {
+                if (startUTC.isBefore(appointment.getEnd()) && endUTC.isAfter(appointment.getStart())) {
+                    hasOverlap = true;
+                    break;
+                }
+            }
+
+            if (hasOverlap) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                ResourceBundle resourceBundle = ResourceBundle.getBundle("lang/AddAppointment", Locale.getDefault());
+                alert.setTitle(resourceBundle.getString("overlapAppointmentTitle"));
+                alert.setHeaderText(null);
+                alert.setContentText(resourceBundle.getString("overlapAppointmentContent"));
+                alert.showAndWait();
+            } else if (startDayOfWeek == DayOfWeek.SATURDAY || startDayOfWeek == DayOfWeek.SUNDAY ||
                     endDayOfWeek == DayOfWeek.SATURDAY || endDayOfWeek == DayOfWeek.SUNDAY) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 ResourceBundle resourceBundle = ResourceBundle.getBundle("lang/AddAppointment", Locale.getDefault());
@@ -181,15 +205,25 @@ public class UpdateAppointment {
                 alert.setHeaderText(null);
                 alert.setContentText(resourceBundle.getString("weekendAppointmentContent"));
                 alert.showAndWait();
-            } else {
+            } else if (startZonedDateTime.toLocalTime().isBefore(estBusinessStart) || endZonedDateTime.toLocalTime().isAfter(estBusinessEnd)) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                ResourceBundle resourceBundle = ResourceBundle.getBundle("lang/AddAppointment", Locale.getDefault());
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText(resourceBundle.getString("badTime") + startZonedDateTime.toLocalTime() + " - " + endZonedDateTime.toLocalTime() + " EST");
+                alert.showAndWait();
+            }
+            else {
                 Appointment newAppointment = new Appointment(id, title, description, location, type,
                         startUTC, endUTC, createDate, createdBy, lastUpdate, lastUpdatedBy, customerId, userId, contactId);
+                System.out.println("appointment added");
                 appointmentDAO.updateAppointment(newAppointment);
                 Stage stage = (Stage) UpdateAppCancelBtn.getScene().getWindow();
                 stage.close();
             }
         }
     }
+
     /**
      * Retrieves the contact ID for a given contact name.
      *

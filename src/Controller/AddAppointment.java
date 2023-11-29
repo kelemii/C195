@@ -19,6 +19,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -27,6 +28,7 @@ import java.util.ResourceBundle;
 import static Help.JDBC.connection;
 import static Help.TimeConversion.convertTime;
 import static Help.TimeConversion.convertUtcToTime;
+import static java.time.Clock.systemDefaultZone;
 
 /**
  * The `AddAppointment` class controls the UI for adding new appointments.
@@ -53,9 +55,9 @@ public class AddAppointment {
     private ComboBox<Integer> AppointmentUser;
     @FXML
     private Button AddAppCancelBtn;
-    private AppointmentDAO appointmentDAO;
-    private UserDAO userDAO = new UserDAO();
-    private ContactDAO contactDAO;
+    public AppointmentDAO appointmentDAO = new AppointmentDAO();
+    public UserDAO userDAO = new UserDAO();
+    public ContactDAO contactDAO;
     /**
      * Initializes the AddAppointment controller.
      *
@@ -161,6 +163,19 @@ public class AddAppointment {
      */
 
     public void AddAppSave(ActionEvent actionEvent) throws SQLException {
+        int id = Integer.parseInt(AppointmentID.getText());
+        String title = AppointmentTitle.getText();
+        String description = AppointmentDesc.getText();
+        String location = AppointmentLoc.getText();
+        String type = AppointmentType.getText();
+        int customerId = getCustomerId(AppointmentCustomer.getValue());
+        int userId = AppointmentUser.getValue();
+        int contactId = getContactId(AppointmentContact.getValue());
+        LocalDateTime createDate = LocalDateTime.now();
+        String createdBy = "Admin";
+        LocalDateTime lastUpdate = LocalDateTime.now();
+        String lastUpdatedBy = "Admin";
+
         if (validateForm()) {
             LocalDate startDate = AppointmentStartD.getValue();
             LocalTime startTime = LocalTime.parse(AppointmentStartT.getValue());
@@ -175,8 +190,39 @@ public class AddAppointment {
 
             DayOfWeek startDayOfWeek = startDateTime.getDayOfWeek();
             DayOfWeek endDayOfWeek = endDateTime.getDayOfWeek();
+            List<Appointment> customerAppointments = appointmentDAO.getAppointmentsForCustomer(customerId);
 
-            if (startDayOfWeek == DayOfWeek.SATURDAY || startDayOfWeek == DayOfWeek.SUNDAY ||
+            ZoneId localTimeZone = ZoneId.systemDefault();
+            ZoneId estTimeZone = ZoneId.of("America/New_York");
+
+            ZonedDateTime startLocalDateTime = LocalDate.now().atTime(startTime).atZone(localTimeZone);
+            ZonedDateTime startEstDateTime = startLocalDateTime.withZoneSameInstant(estTimeZone);
+            LocalTime startEstTime = startEstDateTime.toLocalTime();
+
+            ZonedDateTime endLocalDateTime = LocalDate.now().atTime(endTime).atZone(localTimeZone);
+            ZonedDateTime endEstDateTime = endLocalDateTime.withZoneSameInstant(estTimeZone);
+            LocalTime endEstTime = endEstDateTime.toLocalTime();
+
+            LocalTime estBusinessStart = LocalTime.of(8, 0); // 8:00 AM EST
+            LocalTime estBusinessEnd = LocalTime.of(22, 0); // 10:00 PM EST
+
+            boolean hasOverlap = false;
+
+            for (Appointment appointment : customerAppointments) {
+                if (startUTC.isBefore(appointment.getEnd()) && endUTC.isAfter(appointment.getStart())) {
+                    hasOverlap = true;
+                    break;
+                }
+            }
+
+            if (hasOverlap) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                ResourceBundle resourceBundle = ResourceBundle.getBundle("lang/AddAppointment", Locale.getDefault());
+                alert.setTitle(resourceBundle.getString("overlapAppointmentTitle"));
+                alert.setHeaderText(null);
+                alert.setContentText(resourceBundle.getString("overlapAppointmentContent"));
+                alert.showAndWait();
+            } else if (startDayOfWeek == DayOfWeek.SATURDAY || startDayOfWeek == DayOfWeek.SUNDAY ||
                     endDayOfWeek == DayOfWeek.SATURDAY || endDayOfWeek == DayOfWeek.SUNDAY) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 ResourceBundle resourceBundle = ResourceBundle.getBundle("lang/AddAppointment", Locale.getDefault());
@@ -184,19 +230,15 @@ public class AddAppointment {
                 alert.setHeaderText(null);
                 alert.setContentText(resourceBundle.getString("weekendAppointmentContent"));
                 alert.showAndWait();
+            } else if (startEstTime.isBefore(estBusinessStart) || endEstTime.isAfter(estBusinessEnd)) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                ResourceBundle resourceBundle = ResourceBundle.getBundle("lang/AddAppointment", Locale.getDefault());
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText(resourceBundle.getString("badTime") + startEstTime + " - " + endEstTime + " EST");
+                alert.showAndWait();
             } else {
-                int id = Integer.parseInt(AppointmentID.getText());
-                String title = AppointmentTitle.getText();
-                String description = AppointmentDesc.getText();
-                String location = AppointmentLoc.getText();
-                String type = AppointmentType.getText();
-                int customerId = getCustomerId(AppointmentCustomer.getValue());
-                int userId = AppointmentUser.getValue();
-                int contactId = getContactId(AppointmentContact.getValue());
-                LocalDateTime createDate = LocalDateTime.now();
-                String createdBy = "Admin";
-                LocalDateTime lastUpdate = LocalDateTime.now();
-                String lastUpdatedBy = "Admin";
+
 
                 Appointment newAppointment = new Appointment(id, title, description, location, type,
                         startUTC, endUTC, createDate, createdBy, lastUpdate, lastUpdatedBy, customerId, userId, contactId);

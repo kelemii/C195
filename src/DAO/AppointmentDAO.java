@@ -259,6 +259,44 @@ public class AppointmentDAO {
     }
 
     /**
+     *  queries database for appointments a specific customer has
+     * @param customerId the id of the customer
+     * @return returns list of appointments associated with a specific customer
+     */
+    public List<Appointment> getAppointmentsForCustomer(int customerId) {
+        List<Appointment> appointments = new ArrayList<>();
+        try {
+            String sql = "SELECT * FROM appointments WHERE customer_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, customerId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                int appointmentId = resultSet.getInt("appointment_id");
+                String title = resultSet.getString("title");
+                String description = resultSet.getString("description");
+                String location = resultSet.getString("location");
+                String type = resultSet.getString("type");
+                LocalDateTime start = resultSet.getTimestamp("start").toLocalDateTime();
+                LocalDateTime end = resultSet.getTimestamp("end").toLocalDateTime();
+                LocalDateTime createDate = resultSet.getTimestamp("create_date").toLocalDateTime();
+                LocalDateTime lastUpdate = resultSet.getTimestamp("last_update").toLocalDateTime();
+                String createdBy = resultSet.getString("created_by");
+                String lastUpdatedBy = resultSet.getString("last_updated_by");
+                int userId = resultSet.getInt("user_id");
+                int contactId = resultSet.getInt("contact_id");
+                Appointment appointment = new Appointment(appointmentId, title, description, location, type, start, end, createDate, createdBy, lastUpdate, lastUpdatedBy, customerId, userId, contactId);
+
+                appointments.add(appointment);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return appointments;
+    }
+
+
+    /**
      * generates data for my appointment report tableview
      * @return returns appointment data for reports
      * @throws SQLException if an error occurs with sql
