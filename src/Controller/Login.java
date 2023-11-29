@@ -33,7 +33,7 @@ import java.util.ResourceBundle;
  */
 public class Login implements Initializable {
     Stage stage;
-    private static int currentUserID = 0;
+    public int currentUserID = 0;
     @FXML
     private TextField UserName, password;
     @FXML
@@ -88,8 +88,9 @@ public class Login implements Initializable {
             AppointmentAlert appointmentAlert = new AppointmentAlert();
             appointmentAlert.checkUpcomingAppointments();
         } else {
+            System.out.println("fail");
             logLoginActivity(user, false);
-
+            ResourceBundle resourceBundle = ResourceBundle.getBundle("lang/login", Locale.getDefault());
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle(resourceBundle.getString("Login_Error"));
             alert.setHeaderText(resourceBundle.getString("Invalid_Credentials"));
