@@ -34,6 +34,9 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import static Help.JDBC.connection;
+import static Help.TimeConversion.convertTime;
+import static Help.TimeConversion.convertUtcToTime;
+
 /**
  * The `Main` class controls the main application functionality.
  * It manages appointments and customers, including listing, adding, updating, and deleting them.
@@ -53,26 +56,7 @@ public class Main implements Initializable {
      * @throws SQLException If an SQL exception occurs.
      */
     public void initializeAppointments() throws SQLException {
-        List<Appointment> allAppointments = AppointmentDAO.getAllAppointments();
-        List<Appointment> modifiedAppointments = new ArrayList<>();
-
-        ZoneId localZone = ZoneId.systemDefault();
-
-        for (Appointment appointment : allAppointments) {
-            LocalDateTime startUTC = appointment.getStart();
-            LocalDateTime endUTC = appointment.getEnd();
-
-            ZonedDateTime startLocal = startUTC.atZone(ZoneId.of("UTC")).withZoneSameInstant(localZone);
-            ZonedDateTime endLocal = endUTC.atZone(ZoneId.of("UTC")).withZoneSameInstant(localZone);
-
-            appointment.setStart(startLocal.toLocalDateTime());
-            appointment.setEnd(endLocal.toLocalDateTime());
-
-            modifiedAppointments.add(appointment);
-        }
-
-        ObservableList<Appointment> appointmentData = FXCollections.observableArrayList(modifiedAppointments);
-
+        ObservableList<Appointment> allAppointments = FXCollections.observableArrayList(AppointmentDAO.getAllAppointments());
         AppointmentID.setCellValueFactory(new PropertyValueFactory<>("AppointmentId"));
         AppointmentTitle.setCellValueFactory(new PropertyValueFactory<>("Title"));
         AppointmentType.setCellValueFactory(new PropertyValueFactory<>("Type"));
@@ -83,7 +67,7 @@ public class Main implements Initializable {
         AppContact.setCellValueFactory(new PropertyValueFactory<>("ContactId"));
         AppCustID.setCellValueFactory(new PropertyValueFactory<>("CustomerId"));
         AppUserID.setCellValueFactory(new PropertyValueFactory<>("UserId"));
-        appointmentsTable.setItems(appointmentData);
+        appointmentsTable.setItems(allAppointments);
     }
     /**
      * Initializes the customers table with data from the database.
@@ -108,6 +92,7 @@ public class Main implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle){
+        System.out.println("main page loading");
         try {
             initializeAppointments();
             initializeCustomers();

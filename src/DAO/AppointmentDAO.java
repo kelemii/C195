@@ -8,7 +8,9 @@ import javafx.collections.ObservableList;
 import java.sql.*;
 import java.time.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 import static Help.JDBC.connection;
 
@@ -35,11 +37,18 @@ public class AppointmentDAO {
                 String description = resultSet.getString("Description");
                 String location = resultSet.getString("Location");
                 String type = resultSet.getString("Type");
-                LocalDateTime start = resultSet.getTimestamp("Start").toLocalDateTime();
-                LocalDateTime end = resultSet.getTimestamp("End").toLocalDateTime();
-                LocalDateTime createDate = resultSet.getTimestamp("Create_Date").toLocalDateTime();
+                Timestamp startTimestamp = resultSet.getTimestamp("Start", Calendar.getInstance(TimeZone.getTimeZone("UTC")));
+                Timestamp endTimestamp = resultSet.getTimestamp("End", Calendar.getInstance(TimeZone.getTimeZone("UTC")));
+                Timestamp createDateTime = resultSet.getTimestamp("Create_Date", Calendar.getInstance(TimeZone.getTimeZone("UTC")));
+                Timestamp lastUpdateTime = resultSet.getTimestamp("Last_Update", Calendar.getInstance(TimeZone.getTimeZone("UTC")));
+                LocalDateTime start = startTimestamp.toLocalDateTime();
+                LocalDateTime end = endTimestamp.toLocalDateTime();
+                LocalDateTime createDate = createDateTime.toLocalDateTime();
+                LocalDateTime lastUpdate = lastUpdateTime.toLocalDateTime();
+                System.out.println("Start timeStamp: " + startTimestamp);
+                System.out.println("Start: " + start);
+
                 String createdBy = resultSet.getString("Created_By");
-                LocalDateTime lastUpdate = resultSet.getTimestamp("Last_Update").toLocalDateTime();
                 String lastUpdatedBy = resultSet.getString("Last_Updated_By");
                 int customerId = resultSet.getInt("Customer_ID");
                 int userId = resultSet.getInt("User_ID");
@@ -234,8 +243,8 @@ public class AppointmentDAO {
                 LocalDateTime start = resultSet.getTimestamp("start").toLocalDateTime();
                 LocalDateTime end = resultSet.getTimestamp("end").toLocalDateTime();
                 LocalDateTime createDate = resultSet.getTimestamp("create_date").toLocalDateTime();
-                String createdBy = resultSet.getString("created_by");
                 LocalDateTime lastUpdate = resultSet.getTimestamp("last_update").toLocalDateTime();
+                String createdBy = resultSet.getString("created_by");
                 String lastUpdatedBy = resultSet.getString("last_updated_by");
                 int customerId = resultSet.getInt("customer_id");
                 int userId = resultSet.getInt("user_id");

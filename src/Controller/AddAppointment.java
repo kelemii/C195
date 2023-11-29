@@ -25,6 +25,9 @@ import java.util.ResourceBundle;
 
 
 import static Help.JDBC.connection;
+import static Help.TimeConversion.convertTime;
+import static Help.TimeConversion.convertUtcToTime;
+
 /**
  * The `AddAppointment` class controls the UI for adding new appointments.
  * It allows users to input appointment details and save them to the database.
@@ -162,11 +165,15 @@ public class AddAppointment {
             LocalDate startDate = AppointmentStartD.getValue();
             LocalTime startTime = LocalTime.parse(AppointmentStartT.getValue());
             LocalDateTime startDateTime = LocalDateTime.of(startDate, startTime);
-            DayOfWeek startDayOfWeek = startDateTime.getDayOfWeek();
 
             LocalDate endDate = AppointmentEndD.getValue();
             LocalTime endTime = LocalTime.parse(AppointmentEndT.getValue());
             LocalDateTime endDateTime = LocalDateTime.of(endDate, endTime);
+
+            LocalDateTime startUTC = convertTime(startDateTime).toLocalDateTime();
+            LocalDateTime endUTC = convertTime(endDateTime).toLocalDateTime();
+
+            DayOfWeek startDayOfWeek = startDateTime.getDayOfWeek();
             DayOfWeek endDayOfWeek = endDateTime.getDayOfWeek();
 
             if (startDayOfWeek == DayOfWeek.SATURDAY || startDayOfWeek == DayOfWeek.SUNDAY ||
@@ -186,22 +193,22 @@ public class AddAppointment {
                 int customerId = getCustomerId(AppointmentCustomer.getValue());
                 int userId = AppointmentUser.getValue();
                 int contactId = getContactId(AppointmentContact.getValue());
-                ZoneId localZone = ZoneId.systemDefault();
-                ZoneId utcZone = ZoneId.of("UTC");
-                LocalDateTime startUTC = startDateTime.atZone(localZone).withZoneSameInstant(utcZone).toLocalDateTime();
-                LocalDateTime endUTC = endDateTime.atZone(localZone).withZoneSameInstant(utcZone).toLocalDateTime();
                 LocalDateTime createDate = LocalDateTime.now();
                 String createdBy = "Admin";
                 LocalDateTime lastUpdate = LocalDateTime.now();
                 String lastUpdatedBy = "Admin";
+
                 Appointment newAppointment = new Appointment(id, title, description, location, type,
                         startUTC, endUTC, createDate, createdBy, lastUpdate, lastUpdatedBy, customerId, userId, contactId);
+
                 appointmentDAO.saveAppointment(newAppointment);
+
                 Stage stage = (Stage) AddAppCancelBtn.getScene().getWindow();
                 stage.close();
             }
         }
     }
+
     /**
      * Retrieves the contact ID based on the contact name.
      *

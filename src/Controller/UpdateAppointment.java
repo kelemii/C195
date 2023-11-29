@@ -25,6 +25,8 @@ import java.util.ResourceBundle;
 
 
 import static Help.JDBC.connection;
+import static Help.TimeConversion.convertTime;
+
 /**
  * The `UpdateAppointment` class controls the updating of appointment records.
  */
@@ -153,25 +155,39 @@ public class UpdateAppointment {
             int customerId = getCustomerId(AppointmentCustomer.getValue());
             int userId = AppointmentUser.getValue();
             int contactId = getContactId(AppointmentContact.getValue());
-            LocalTime startT = LocalTime.parse(AppointmentStartT.getValue());
-            LocalTime endT = LocalTime.parse(AppointmentEndT.getValue());
-            ZoneId localZone = ZoneId.systemDefault();
-            ZoneId utcZone = ZoneId.of("UTC");
-            LocalDateTime startDateTime = LocalDateTime.of(AppointmentStartD.getValue(), startT);
-            ZonedDateTime startLocal = startDateTime.atZone(localZone);
-            ZonedDateTime startUTC = startLocal.withZoneSameInstant(utcZone);
-            LocalDateTime endDateTime = LocalDateTime.of(AppointmentEndD.getValue(), endT);
-            ZonedDateTime endLocal = endDateTime.atZone(localZone);
-            ZonedDateTime endUTC = endLocal.withZoneSameInstant(utcZone);
+            LocalDate startDate = AppointmentStartD.getValue();
+            LocalTime startTime = LocalTime.parse(AppointmentStartT.getValue());
+            LocalDateTime startDateTime = LocalDateTime.of(startDate, startTime);
+
+            LocalDate endDate = AppointmentEndD.getValue();
+            LocalTime endTime = LocalTime.parse(AppointmentEndT.getValue());
+            LocalDateTime endDateTime = LocalDateTime.of(endDate, endTime);
+
+            LocalDateTime startUTC = convertTime(startDateTime).toLocalDateTime();
+            LocalDateTime endUTC = convertTime(endDateTime).toLocalDateTime();
             LocalDateTime createDate = LocalDateTime.now();
             String createdBy = "Admin";
             LocalDateTime lastUpdate = LocalDateTime.now();
             String lastUpdatedBy = "Admin";
-            Appointment newAppointment = new Appointment(id, title, description, location, type,
-                    startUTC.toLocalDateTime(), endUTC.toLocalDateTime(), createDate, createdBy, lastUpdate, lastUpdatedBy, customerId, userId, contactId);
-            appointmentDAO.updateAppointment(newAppointment);
-            Stage stage = (Stage) UpdateAppCancelBtn.getScene().getWindow();
-            stage.close();
+
+            DayOfWeek startDayOfWeek = startDateTime.getDayOfWeek();
+            DayOfWeek endDayOfWeek = endDateTime.getDayOfWeek();
+
+            if (startDayOfWeek == DayOfWeek.SATURDAY || startDayOfWeek == DayOfWeek.SUNDAY ||
+                    endDayOfWeek == DayOfWeek.SATURDAY || endDayOfWeek == DayOfWeek.SUNDAY) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                ResourceBundle resourceBundle = ResourceBundle.getBundle("lang/AddAppointment", Locale.getDefault());
+                alert.setTitle(resourceBundle.getString("weekendAppointmentTitle"));
+                alert.setHeaderText(null);
+                alert.setContentText(resourceBundle.getString("weekendAppointmentContent"));
+                alert.showAndWait();
+            } else {
+                Appointment newAppointment = new Appointment(id, title, description, location, type,
+                        startUTC, endUTC, createDate, createdBy, lastUpdate, lastUpdatedBy, customerId, userId, contactId);
+                appointmentDAO.updateAppointment(newAppointment);
+                Stage stage = (Stage) UpdateAppCancelBtn.getScene().getWindow();
+                stage.close();
+            }
         }
     }
     /**
