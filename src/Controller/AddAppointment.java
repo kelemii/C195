@@ -35,24 +35,54 @@ import static java.time.Clock.systemDefaultZone;
  * It allows users to input appointment details and save them to the database.
  */
 public class AddAppointment {
+    /**
+     * textfield
+     */
     @FXML
     private TextField AppointmentID;
+    /**
+     * textfield
+     */
     @FXML
     private TextField AppointmentTitle;
+    /**
+     * textfield
+     */
     @FXML
     private TextField AppointmentDesc;
+    /**
+     * textfield
+     */
     @FXML
     private TextField AppointmentLoc;
+    /**
+     * textfield
+     */
     @FXML
     private TextField AppointmentType;
+    /**
+     * date picker for appointment start/end
+     */
     @FXML
     private DatePicker AppointmentStartD, AppointmentEndD;
+    /**
+     * combo box
+     */
     @FXML
     private ComboBox<String> AppointmentStartT, AppointmentEndT;
+    /**
+     * combo box
+     */
     @FXML
     private ComboBox<String> AppointmentContact, AppointmentCustomer;
+    /**
+     * combo box for user
+     */
     @FXML
     private ComboBox<Integer> AppointmentUser;
+    /**
+     * apps cancel button
+     */
     @FXML
     private Button AddAppCancelBtn;
     /**

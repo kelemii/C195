@@ -28,16 +28,31 @@ import static DAO.CustomerDAO.generateDivisionReport;
  * It allows users to generate and view various reports.
  */
 public class Reports {
+    /**
+     * table for appointment reports
+     */
     @FXML
     private TableView<AppointmentReportRow> reportTable;
+    /**
+     * combobox for contacts
+     */
     @FXML
     private ComboBox<String> contactCombo;
     ContactDAO contactDAO =  new ContactDAO();
     AppointmentDAO appointmentDAO = new AppointmentDAO();
+    /**
+     * tableview columns
+     */
     @FXML
     private TableColumn<?, ?> AppointmentID, AppointmentTitle, AppointmentType, AppointmentDescription, AppointmentLocation, AppointmentStart, AppointmentEnd, AppContact, AppCustID, AppUserID, AppMonth, AppType, AppTotal, DivName, TotalCust;
+    /**
+     * tableview for appointemtns
+     */
     @FXML
     private TableView<Appointment> appointmentsTable;
+    /**
+     * tableview for divisons
+     */
     @FXML
     private TableView<DivisionReportRow> divisionTable;
     /**

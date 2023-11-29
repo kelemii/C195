@@ -32,12 +32,24 @@ import static Help.JDBC.connection;
 public class AddCustomer {
     FirstLevelDivisionDAO firstLevelDivisionDAO;
     CustomerDAO customerDao;
+    /**
+     * buttons for cancel/save
+     */
     @FXML
     private Button customerCancel, customerSave;
+    /**
+     * textfields for customer data
+     */
     @FXML
     private TextField CustomerID, CustomerName, CustomerAdd, CustomerZip, CustomerPhone;
+    /**
+     * combo box for country
+     */
     @FXML
     private ComboBox<String> CustomerCountry;
+    /**
+     * combo box for state
+     */
     @FXML
     private ComboBox<String>  CustomerState;
     /**

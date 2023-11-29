@@ -105,7 +105,6 @@ public class User {
      *
      * @param userId the user id
      */
-
     public void setUserId(int userId) {
         this.userId = userId;
     }

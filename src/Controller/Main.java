@@ -42,11 +42,20 @@ import static Help.TimeConversion.convertUtcToTime;
  * It manages appointments and customers, including listing, adding, updating, and deleting them.
  */
 public class Main implements Initializable {
+    /**
+     * appointments tableview
+     */
 
     @FXML
     private TableView<Appointment> appointmentsTable;
+    /**
+     * customers tableview
+     */
     @FXML
     private TableView<Customer> customersTable;
+    /**
+     * tableview columns
+     */
     @FXML
     private TableColumn<?, ?> AppointmentID, AppointmentTitle, AppointmentType, AppointmentDescription, AppointmentLocation, AppointmentStart, AppointmentEnd, AppContact, AppCustID, AppUserID, CustID, CustName, CustAdd, CustPhone, CustState, CustZip;
 
