@@ -92,7 +92,6 @@ public class Main implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle){
-        System.out.println("main page loading");
         try {
             initializeAppointments();
             initializeCustomers();

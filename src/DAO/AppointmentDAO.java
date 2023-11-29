@@ -45,8 +45,6 @@ public class AppointmentDAO {
                 LocalDateTime end = endTimestamp.toLocalDateTime();
                 LocalDateTime createDate = createDateTime.toLocalDateTime();
                 LocalDateTime lastUpdate = lastUpdateTime.toLocalDateTime();
-                System.out.println("Start timeStamp: " + startTimestamp);
-                System.out.println("Start: " + start);
 
                 String createdBy = resultSet.getString("Created_By");
                 String lastUpdatedBy = resultSet.getString("Last_Updated_By");

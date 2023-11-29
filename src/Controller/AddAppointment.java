@@ -241,7 +241,7 @@ public class AddAppointment {
 
 
                 Appointment newAppointment = new Appointment(id, title, description, location, type,
-                        startUTC, endUTC, createDate, createdBy, lastUpdate, lastUpdatedBy, customerId, userId, contactId);
+                        startDateTime, endDateTime, createDate, createdBy, lastUpdate, lastUpdatedBy, customerId, userId, contactId);
 
                 appointmentDAO.saveAppointment(newAppointment);
 

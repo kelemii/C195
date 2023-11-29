@@ -88,7 +88,6 @@ public class Login implements Initializable {
             AppointmentAlert appointmentAlert = new AppointmentAlert();
             appointmentAlert.checkUpcomingAppointments();
         } else {
-            System.out.println("fail");
             logLoginActivity(user, false);
             ResourceBundle resourceBundle = ResourceBundle.getBundle("lang/login", Locale.getDefault());
             Alert alert = new Alert(Alert.AlertType.ERROR);

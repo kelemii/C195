@@ -215,8 +215,7 @@ public class UpdateAppointment {
             }
             else {
                 Appointment newAppointment = new Appointment(id, title, description, location, type,
-                        startUTC, endUTC, createDate, createdBy, lastUpdate, lastUpdatedBy, customerId, userId, contactId);
-                System.out.println("appointment added");
+                        startDateTime, endDateTime, createDate, createdBy, lastUpdate, lastUpdatedBy, customerId, userId, contactId);
                 appointmentDAO.updateAppointment(newAppointment);
                 Stage stage = (Stage) UpdateAppCancelBtn.getScene().getWindow();
                 stage.close();

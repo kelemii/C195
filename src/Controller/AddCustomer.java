@@ -107,7 +107,6 @@ public class AddCustomer {
      * @throws SQLException If an SQL exception occurs while retrieving state data.
      */
     public void populateStateComboBoxes() throws SQLException {
-        System.out.println("populating states");
         ObservableList<FirstLevelDivision> states1 = FXCollections.observableArrayList();
 
         if (CustomerCountry.getValue() != null) {

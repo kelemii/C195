@@ -18,9 +18,6 @@ public class TimeConversion {
         ZoneId systemDefaultZone = ZoneId.systemDefault();
         ZonedDateTime utcZonedDateTime = utcDateTime.atZone(ZoneId.of("UTC"));
         ZonedDateTime localZonedDateTime = utcZonedDateTime.withZoneSameInstant(systemDefaultZone);
-        System.out.println(utcDateTime);
-        System.out.println(utcZonedDateTime);
-        System.out.println(localZonedDateTime);
         return localZonedDateTime.toLocalDateTime();
     }
 
