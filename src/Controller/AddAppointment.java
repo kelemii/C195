@@ -214,38 +214,39 @@ public class AddAppointment {
         String createdBy = "Admin";
         LocalDateTime lastUpdate = LocalDateTime.now();
         String lastUpdatedBy = "Admin";
+        LocalDate startDate = AppointmentStartD.getValue();
+        LocalTime startTime = LocalTime.parse(AppointmentStartT.getValue());
+        LocalDateTime startDateTime = LocalDateTime.of(startDate, startTime);
+
+        LocalDate endDate = AppointmentEndD.getValue();
+        LocalTime endTime = LocalTime.parse(AppointmentEndT.getValue());
+        LocalDateTime endDateTime = LocalDateTime.of(endDate, endTime);
+
+        LocalDateTime startUTC = convertTime(startDateTime).toLocalDateTime();
+        LocalDateTime endUTC = convertTime(endDateTime).toLocalDateTime();
+
+        DayOfWeek startDayOfWeek = startDateTime.getDayOfWeek();
+        DayOfWeek endDayOfWeek = endDateTime.getDayOfWeek();
+        List<Appointment> customerAppointments = appointmentDAO.getAppointmentsForCustomer(customerId);
+
+        ZoneId localTimeZone = ZoneId.systemDefault();
+        ZoneId estTimeZone = ZoneId.of("America/New_York");
+
+        ZonedDateTime startLocalDateTime = LocalDate.now().atTime(startTime).atZone(localTimeZone);
+        ZonedDateTime startEstDateTime = startLocalDateTime.withZoneSameInstant(estTimeZone);
+        LocalTime startEstTime = startEstDateTime.toLocalTime();
+
+        ZonedDateTime endLocalDateTime = LocalDate.now().atTime(endTime).atZone(localTimeZone);
+        ZonedDateTime endEstDateTime = endLocalDateTime.withZoneSameInstant(estTimeZone);
+        LocalTime endEstTime = endEstDateTime.toLocalTime();
+
+        LocalTime estBusinessStart = LocalTime.of(8, 0); // 8:00 AM EST
+        LocalTime estBusinessEnd = LocalTime.of(22, 0); // 10:00 PM EST
 
         if (validateForm()) {
-            LocalDate startDate = AppointmentStartD.getValue();
-            LocalTime startTime = LocalTime.parse(AppointmentStartT.getValue());
-            LocalDateTime startDateTime = LocalDateTime.of(startDate, startTime);
 
-            LocalDate endDate = AppointmentEndD.getValue();
-            LocalTime endTime = LocalTime.parse(AppointmentEndT.getValue());
-            LocalDateTime endDateTime = LocalDateTime.of(endDate, endTime);
 
-            LocalDateTime startUTC = convertTime(startDateTime).toLocalDateTime();
-            LocalDateTime endUTC = convertTime(endDateTime).toLocalDateTime();
-
-            DayOfWeek startDayOfWeek = startDateTime.getDayOfWeek();
-            DayOfWeek endDayOfWeek = endDateTime.getDayOfWeek();
-            List<Appointment> customerAppointments = appointmentDAO.getAppointmentsForCustomer(customerId);
-
-            ZoneId localTimeZone = ZoneId.systemDefault();
-            ZoneId estTimeZone = ZoneId.of("America/New_York");
-
-            ZonedDateTime startLocalDateTime = LocalDate.now().atTime(startTime).atZone(localTimeZone);
-            ZonedDateTime startEstDateTime = startLocalDateTime.withZoneSameInstant(estTimeZone);
-            LocalTime startEstTime = startEstDateTime.toLocalTime();
-
-            ZonedDateTime endLocalDateTime = LocalDate.now().atTime(endTime).atZone(localTimeZone);
-            ZonedDateTime endEstDateTime = endLocalDateTime.withZoneSameInstant(estTimeZone);
-            LocalTime endEstTime = endEstDateTime.toLocalTime();
-
-            LocalTime estBusinessStart = LocalTime.of(8, 0); // 8:00 AM EST
-            LocalTime estBusinessEnd = LocalTime.of(22, 0); // 10:00 PM EST
-
-            boolean hasOverlap = false;
+            boolean hasOverlap = appointmentDAO.hasOverlappingAppointment(startDateTime, endDateTime, customerId);
 
             for (Appointment appointment : customerAppointments) {
                 if (startUTC.isBefore(appointment.getEnd()) && endUTC.isAfter(appointment.getStart())) {

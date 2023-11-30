@@ -325,4 +325,36 @@ public class AppointmentDAO {
         return reportDataList;
     }
 
+    /**
+     * Checks if the customer has an overlapping appointment.
+     *
+     * @param startTime   The start time of the selected appointment.
+     * @param endTime     The end time of the selected appointment.
+     * @param customerId  The ID of the customer.
+     * @return true if there is an overlapping appointment, false otherwise.
+     * @throws SQLException if a database access error occurs.
+     */
+    public boolean hasOverlappingAppointment(LocalDateTime startTime, LocalDateTime endTime, int customerId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM appointments WHERE customer_id = ? AND ((start <= ? AND end > ?) OR (start < ? AND end >= ?))";
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, customerId);
+            preparedStatement.setTimestamp(2, Timestamp.valueOf(startTime));
+            preparedStatement.setTimestamp(3, Timestamp.valueOf(startTime));
+            preparedStatement.setTimestamp(4, Timestamp.valueOf(endTime));
+            preparedStatement.setTimestamp(5, Timestamp.valueOf(endTime));
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return false;
+    }
+
+
 }
