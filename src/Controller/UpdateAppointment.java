@@ -190,7 +190,7 @@ public class UpdateAppointment {
             ZonedDateTime endZonedDateTime = endDateTime.atZone(estTimeZone);
 
 
-            boolean hasOverlap = false;
+            boolean hasOverlap = appointmentDAO.hasOverlappingAppointmentExceptCurrent(startDateTime, endDateTime, customerId, id);
 
             for (Appointment appointment : customerAppointments) {
                 if (startUTC.isBefore(appointment.getEnd()) && endUTC.isAfter(appointment.getStart())) {
